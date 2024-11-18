@@ -100,6 +100,64 @@ mahalanobisModel <- function(x, vars) {
     pred
 }
 
+# Multivariate normal distribution
+dmnorm <- function(x, mu, sigma) {
+    # mu is a vector of averages per variable
+    # sigma is the covariance matrix
+    if (is.null(dim(mu))) {
+        mu <- matrix(mu)
+    }
+    n <- ncol(x)
+    if (n != nrow(mu) | n != ncol(sigma)) {
+        stop("Dimensions do not match!")
+    }
+    isigma <- solve(sigma)
+    den <- ((2*pi)**(n/2) * sqrt(det(sigma)))
+    centered <- sweep(x, 2, mu)
+    dens <- apply(centered, 1, function(x){exp(-(1/2) * t(x) %*% isigma %*% x)})
+    return(dens/den)
+}
+
+mvnormalModel <- function(x, vars) {
+       
+    # Stop if not enough data points
+    if (nrow(x) < 5) {
+        stop("Very low number of samples. Consider resampling first with envResample.")
+    }
+    
+    data <- as.data.frame(vars, na.rm=F)
+    mask <- !is.na(rowSums(data))
+    
+    vals <- extract(vars, x, ID=FALSE)
+    
+    # estimate mean value and covmat (sig)
+    avg <- colMeans(vals, na.rm=T)
+    sig <- cov(vals)
+        
+    
+    pred <- vars[[1]] * NA
+    values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
+    list(pred, list(avg, sig))
+}
+
+envResample <- function(x, vars, maxsample=50)  {
+
+        dt.all <- t(data.frame(rasters))
+        ns <- round(maxsample/nrow(dt), 0)
+        for (i in 1:nrow(dt)) {
+            d <- colSums((dt.all - unlist(dt[i,]))**2)
+            dt.new <- t(dt.all[,order(d)[1:ns]])
+            colnames(dt.new) <- colnames(dt)
+            dt <- rbind(dt, dt.new)
+        }
+
+}
+
+
+
+
+
+
 PI <- vect("GIS/world_borders_PI.shp")
 tmp <- rast("GIS/wc2.0_bio_5m_01.tif")
 prc <- rast("GIS/wc2.0_bio_5m_12.tif")
