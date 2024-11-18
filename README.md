@@ -9,3 +9,4 @@
 - Maybe add resampling to Mahalanobis (needs to estimate covariance)
 - Create an R package
 - Add documentation and references to original model publications
+- Maybe some accessory functions to clean data set? (Remove duplicates, NAs, etc)
