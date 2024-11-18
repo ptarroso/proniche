@@ -72,7 +72,7 @@ domainmodel <- function(vals, vars) {
     }
     pred <- vars[[1]] * NA
     values(pred) <- D
-    pred
+    list(pred)
 }
 
 # mahalanobis distance
@@ -80,6 +80,7 @@ mah.dist <- function(x, u, sigma) {
     sqrt(t(x-u)%*%solve(sigma)%*%(x-u))
 }
 
+#Note: scales distances to zero-one range and inverts (near is 1, far is zero)
 mahalanobisModel <- function(vals, vars) {
     data <- as.data.frame(vars, na.rm=F)
     M <- rep(NA, nrow(data))
@@ -90,8 +91,8 @@ mahalanobisModel <- function(vals, vars) {
         M[i] <- mah.dist(unlist(data[i,]), u, sigma)
     }
     pred <- vars[[1]] * NA
-    values(pred) <- M
-    pred
+    values(pred) <- 1 - (M/max(M, na.rm=T))
+    list(pred)
 }
 
 # Multivariate normal distribution
@@ -145,20 +146,27 @@ envResample <- function(vals, vars, maxsample=50) {
     vals
 }
 
-
+# example
 PI <- vect("GIS/world_borders_PI.shp")
 tmp <- rast("GIS/wc2.0_bio_5m_01.tif")
 prc <- rast("GIS/wc2.0_bio_5m_12.tif")
 vars <- c(tmp, prc)
 chilus <- read.table("GIS/chilus.csv", sep=";", header=TRUE)
-
 vals <- extract(vars, chilus, ID=FALSE)
 
-bc <- bioclim(chilus, vars)
-plot(bc[[1]])
+bc <- bioclim(vals, vars)
+ch <- convexHullModel(vals, vars)
+km <- kernelModel(vals, vars)
+dm <- domainmodel(vals, vars)
+mm <- mahalanobisModel(vals, vars)
+mvn <- mvnormalModel(vals, vars)
 
-
-
-
+layout(matrix(1:6, 3))
+plot(bc[[1]], main="bioclim")
+plot(ch[[1]], main="Convex Hull")
+plot(km[[1]], main="Kernel")
+plot(dm[[1]], main="Domain")
+plot(mm[[1]], main="Mahalanobis ")
+plot(mvn[[1]], main="Multivariate Normal")
 
 
