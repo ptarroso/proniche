@@ -130,7 +130,20 @@ mvnormalModel <- function(vals, vars) {
     list(pred, list(avg, sig))
 }
 
-
+# Adds samples to data by the nearest "maxsample" points to 
+# each original sample in the environmental space
+# Note: might have non-unique environmental samples!
+envResample <- function(vals, vars, maxsample=50) {
+    data <- t(data.frame(vars))
+    ns <- round(maxsample/nrow(vals), 0)
+    for (i in 1:nrow(vals)) {
+        d <- colSums((data - unlist(vals[i,]))**2)
+        data.new <- t(data[,order(d)[1:ns]])
+        colnames(data.new) <- colnames(vals)
+        vals <- rbind(vals, data.new)
+    }
+    vals
+}
 
 
 PI <- vect("GIS/world_borders_PI.shp")
