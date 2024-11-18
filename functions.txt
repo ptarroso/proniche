@@ -148,8 +148,8 @@ envResample <- function(vals, vars, maxsample=50) {
 
 # example
 PI <- vect("GIS/world_borders_PI.shp")
-tmp <- rast("GIS/wc2.0_bio_5m_01.tif")
-prc <- rast("GIS/wc2.0_bio_5m_12.tif")
+tmp <- rast(c("GIS/wc2.0_bio_5m_01.tif", "GIS/wc2.0_bio_5m_06.tif"))
+prc <- rast(c("GIS/wc2.0_bio_5m_12.tif", "GIS/wc2.0_bio_5m_14.tif"))
 vars <- c(tmp, prc)
 chilus <- read.table("GIS/chilus.csv", sep=";", header=TRUE)
 vals <- extract(vars, chilus, ID=FALSE)
