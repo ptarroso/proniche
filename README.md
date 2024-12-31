@@ -1,14 +1,44 @@
-# PRresence Only NICHE modelling
+# PRresence-Only NICHE modelling
 
-- Functions for several presence only niches models (bioclim, convexhull, kernel, domain, mahalanobis, normal distribution) adapted to multivariate
+- Functions for several presence-only niche models (bioclim or environmental envelope, environmental convex hull, kernel, domain, mahalanobis distance, multivariate normal distribution) adapted to multivariate datasets
 - Some example data
 - Some coded examples
 
-# TODO
+# Usage
+
+```
+library(terra)
+library(proniche)
+
+PI <- terra::vect("GIS/world_borders_PI.shp")
+tmp <- terra::rast(c("GIS/wc2.0_bio_5m_01.tif", "GIS/wc2.0_bio_5m_06.tif"))
+prc <- terra::rast(c("GIS/wc2.0_bio_5m_12.tif", "GIS/wc2.0_bio_5m_14.tif"))
+vars <- c(tmp, prc)
+chilus <- read.table("GIS/chilus.csv", sep=";", header=TRUE)
+vals <- extract(vars, chilus, ID=FALSE)
+
+bc <- model(vals, vars, method = "bioclim")
+ch <- model(vals, vars, method = "convexhull")
+km <- model(vals, vars, method = "kernel")
+dm <- model(vals, vars, method = "domain")
+mm <- model(vals, vars, method = "mahalanobis")
+mv <- model(vals, vars, method = "mvnormal")
+
+layout(matrix(1:6, 3))
+plot(bc[[1]], main="bioclim")
+plot(ch[[1]], main="Convex Hull")
+plot(km[[1]], main="Kernel")
+plot(dm[[1]], main="Domain")
+plot(mm[[1]], main="Mahalanobis ")
+plot(mv[[1]], main="Multivariate Normal")
+```
+
+
+# TO DO
 - ~~Add multivariate normal distribution~~
 - ~~Maybe add resampling to Mahalanobis (needs to estimate covariance)~~
-- Create an R package
-- Add documentation and references to original model publications
+- ~~Create an R package~~
+- Add ~~documentation and~~ references to original model publications
 - Maybe some accessory functions to clean data set? (Remove duplicates, NAs, etc)
 - ~~Instead of receiving coordinates as input, perhaps modelling functions should get already the environmental values at presences?~~ 
 - function to plot models representation in environmental space?

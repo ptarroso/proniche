@@ -1,7 +1,3 @@
-library(terra)
-library(geometry)
-library(ks)
-
 bioclim <- function(vals, vars, nq=10) {
     qt <- seq(0, 0.5, length.out=nq)
     env_rect <- matrix(NA, nq, nlyr(vars)*2+1)
@@ -32,7 +28,7 @@ convexHullModel <- function(vals, vars) {
         values(pred) <- values(pred) + geometry::inhulln(ch, data)
         vals <- vals[-unique(ch),]
         env_ch[[i]] <- ch
-        i <- i + 1       
+        i <- i + 1
     }
     list(pred, env_ch)
 }
@@ -63,12 +59,11 @@ domainmodel <- function(vals, vars) {
     data <- as.data.frame(vars, na.rm=F)
     D <- rep(NA, nrow(data))
     mask <- !is.na(rowSums(data))
-    rng <-  unlist(apply(vals, 2, function(d) diff(range(d))))
+    rng <- unlist(apply(vals, 2, function(d) diff(range(d))))
     for (i in which(mask)) {
         G <- gower(unlist(data[i,]), vals, rng)
         G[which(G>1)] <- 1
         D[i] <- max(1-G, na.rm=T)
-       
     }
     pred <- vars[[1]] * NA
     values(pred) <- D
@@ -86,7 +81,7 @@ mahalanobisModel <- function(vals, vars) {
     M <- rep(NA, nrow(data))
     mask <- !is.na(rowSums(data))
     u <- colMeans(vals)
-    sigma <- cov(vals) # Need always a few points to estimate covaraince
+    sigma <- stats::cov(vals) # Need always a few points to estimate covaraince
     for (i in which(mask)) {
         M[i] <- mah.dist(unlist(data[i,]), u, sigma)
     }
@@ -123,15 +118,14 @@ mvnormalModel <- function(vals, vars) {
 
     # estimate mean value and covmat (sig)
     avg <- colMeans(vals, na.rm=T)
-    sig <- cov(vals)
-        
-    
+    sig <- stats::cov(vals)
+
     pred <- vars[[1]] * NA
     values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
     list(pred, list(avg, sig))
 }
 
-# Adds samples to data by the nearest "maxsample" points to 
+# Adds samples to data by the nearest "maxsample" points to
 # each original sample in the environmental space
 # Note: might have non-unique environmental samples!
 envResample <- function(vals, vars, maxsample=50) {
@@ -145,28 +139,3 @@ envResample <- function(vals, vars, maxsample=50) {
     }
     vals
 }
-
-# example
-PI <- vect("GIS/world_borders_PI.shp")
-tmp <- rast(c("GIS/wc2.0_bio_5m_01.tif", "GIS/wc2.0_bio_5m_06.tif"))
-prc <- rast(c("GIS/wc2.0_bio_5m_12.tif", "GIS/wc2.0_bio_5m_14.tif"))
-vars <- c(tmp, prc)
-chilus <- read.table("GIS/chilus.csv", sep=";", header=TRUE)
-vals <- extract(vars, chilus, ID=FALSE)
-
-bc <- bioclim(vals, vars)
-ch <- convexHullModel(vals, vars)
-km <- kernelModel(vals, vars)
-dm <- domainmodel(vals, vars)
-mm <- mahalanobisModel(vals, vars)
-mvn <- mvnormalModel(vals, vars)
-
-layout(matrix(1:6, 3))
-plot(bc[[1]], main="bioclim")
-plot(ch[[1]], main="Convex Hull")
-plot(km[[1]], main="Kernel")
-plot(dm[[1]], main="Domain")
-plot(mm[[1]], main="Mahalanobis ")
-plot(mvn[[1]], main="Multivariate Normal")
-
-
