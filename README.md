@@ -3,17 +3,16 @@
 
 # proniche: PRresence-Only NICHE modelling
 
-- Functions for computing niche models using a variety of **truly
-  presence-only methods** (i.e., methods that use only environmental
-  data from the presence sites, with no background or pseudo-absence
-  data):
+R package for computing niche models using a variety of **truly
+presence-only methods** (i.e., methods that use only environmental info
+from the presence sites, with no background or pseudo-absence data):
 
-  - Bioclim (rectangular environmental envelope)
-  - Convex hull (in environmental space)
-  - Domain
-  - Mahalanobis distance
-  - Kernel
-  - Multivariate normal distribution
+- Bioclim (rectangular environmental envelope)
+- Convex hull (in environmental space)
+- Domain
+- Mahalanobis distance
+- Kernel
+- Multivariate normal distribution
 
 ## Usage
 
@@ -21,12 +20,25 @@
 # devtools::install_github("https://github.com/ptarroso/proniche")
 library(proniche)
 
-PI <- terra::vect("GIS/world_borders_PI.shp")
 tmp <- terra::rast(c("GIS/wc2.0_bio_5m_01.tif", "GIS/wc2.0_bio_5m_06.tif"))
 prc <- terra::rast(c("GIS/wc2.0_bio_5m_12.tif", "GIS/wc2.0_bio_5m_14.tif"))
 vars <- c(tmp, prc)
+terra::plot(vars)
+```
+
+<img src="man/figures/README-usage-1.png" width="100%" />
+
+``` r
+
 chilus <- read.table("GIS/chilus.csv", sep=";", header=TRUE)
 vals <- terra::extract(vars, chilus, ID=FALSE)
+terra::plot(vars[[1]] * 0, col = "grey", legend = FALSE, main = "presences")
+points(chilus, pch = 20, cex = 0.2)
+```
+
+<img src="man/figures/README-usage-2.png" width="100%" />
+
+``` r
 
 bc <- model(vals, vars, method = "bioclim")
 ch <- model(vals, vars, method = "convexhull")
@@ -44,7 +56,7 @@ terra::plot(km[[1]], main="Kernel")
 terra::plot(mv[[1]], main="Multivariate Normal")
 ```
 
-<img src="man/figures/README-usage-1.png" width="100%" />
+<img src="man/figures/README-usage-3.png" width="100%" />
 
 ## TO DO
 

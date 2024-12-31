@@ -3,7 +3,6 @@ model <- function(vals, vars, method = "bioclim") {
   # version 1.0 (31 Dec 2024)
 
   method <- tolower(method)
-
   method <- match.arg(method, choices = c("bioclim", "domain", "convexhull", "mahalanobis", "kernel", "mvnormal"))
 
   vals <- as.data.frame(vals)  # else errors for some methods if only one variable
