@@ -24,7 +24,7 @@ R package for computing niche models using a variety of **truly presence-only me
 - Convex hull (in environmental space)
 - Domain
 - Mahalanobis distance
-- Kernel
+- Kernel density estimate
 - Multivariate normal distribution
 
 

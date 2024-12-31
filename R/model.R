@@ -11,7 +11,7 @@ model <- function(vals, vars, method = "bioclim") {
     bioclim(vals, vars)
 
   else if (method == "convexhull") {
-    if (ncol(vals) < 2) stop("'convexhull' method requires at least 2 variables.")
+    if (ncol(vals) < 2) stop("input 'method' requires more than one variable.")
 
     # otherwise:
     # Error in doTryCatch(return(expr), name, parentenv, handler) :
@@ -35,6 +35,8 @@ model <- function(vals, vars, method = "bioclim") {
   else if (method == "kernel")
     kernelModel(vals, vars)
 
-  else if (method == "mvnormal")
+  else if (method == "mvnormal") {
+    if (ncol(vals) < 2) stop("input 'method' requires more than one variable.")
     mvnormalModel(vals, vars)
+  }
 }
