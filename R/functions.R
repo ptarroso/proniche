@@ -1,3 +1,6 @@
+# functions by Pedro Tarroso
+# not exported; called by wrapper function models()
+
 bioclim <- function(vals, vars, nq=10) {
     qt <- seq(0, 0.5, length.out=nq)
     env_rect <- matrix(NA, nq, nlyr(vars)*2+1)
