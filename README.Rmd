@@ -1,18 +1,30 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+```{r settings, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  eval = TRUE,
+  echo = TRUE,
+  include = TRUE
+)
+```
+
 # PRresence-Only NICHE modelling
 
-- Functions for several presence-only niche models (bioclim or
-  environmental envelope, environmental convex hull, kernel, domain,
-  mahalanobis distance, multivariate normal distribution) adapted to
-  multivariate datasets
+- Functions for several presence-only niche models (bioclim or environmental envelope, environmental convex hull, kernel, domain, mahalanobis distance, multivariate normal distribution) adapted to multivariate datasets
 - Some example data
 - Some coded examples
 
 # Usage
 
-``` r
+```{r usage}
 # devtools::install_github("https://github.com/ptarroso/proniche")
 library(proniche)
 
@@ -39,7 +51,6 @@ terra::plot(mm[[1]], main="Mahalanobis ")
 terra::plot(mv[[1]], main="Multivariate Normal")
 ```
 
-<img src="man/figures/README-usage-1.png" width="100%" />
 
 # TO DO
 
@@ -47,8 +58,6 @@ terra::plot(mv[[1]], main="Multivariate Normal")
 - ~~Maybe add resampling to Mahalanobis (needs to estimate covariance)~~
 - ~~Create an R package~~
 - Add ~~documentation and~~ references to original model publications
-- Maybe some accessory functions to clean data set? (Remove duplicates,
-  NAs, etc)
-- ~~Instead of receiving coordinates as input, perhaps modelling
-  functions should get already the environmental values at presences?~~
+- Maybe some accessory functions to clean data set? (Remove duplicates, NAs, etc)
+- ~~Instead of receiving coordinates as input, perhaps modelling functions should get already the environmental values at presences?~~ 
 - function to plot models representation in environmental space?
