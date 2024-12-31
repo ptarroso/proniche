@@ -16,13 +16,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-# PRresence-Only NICHE modelling
+# proniche: PRresence-Only NICHE modelling
 
-- Functions for several presence-only niche models (bioclim or environmental envelope, environmental convex hull, kernel, domain, mahalanobis distance, multivariate normal distribution) adapted to multivariate datasets
-- Some example data
-- Some coded examples
+- Functions for computing niche models using a variety of **truly presence-only methods** (i.e., methods that use only environmental data from the presence sites, with no background or pseudo-absence data):
 
-# Usage
+    - Bioclim (rectangular environmental envelope)
+    - Convex hull (in environmental space)
+    - Domain
+    - Mahalanobis distance
+    - Kernel
+    - Multivariate normal distribution
+
+
+## Usage
 
 ```{r usage}
 # devtools::install_github("https://github.com/ptarroso/proniche")
@@ -37,22 +43,22 @@ vals <- terra::extract(vars, chilus, ID=FALSE)
 
 bc <- model(vals, vars, method = "bioclim")
 ch <- model(vals, vars, method = "convexhull")
-km <- model(vals, vars, method = "kernel")
 dm <- model(vals, vars, method = "domain")
 mm <- model(vals, vars, method = "mahalanobis")
+km <- model(vals, vars, method = "kernel")
 mv <- model(vals, vars, method = "mvnormal")
 
-layout(matrix(1:6, 3))
-terra::plot(bc[[1]], main="bioclim")
+par(mfrow = c(2, 3))
+terra::plot(bc[[1]], main="Bioclim")
 terra::plot(ch[[1]], main="Convex Hull")
-terra::plot(km[[1]], main="Kernel")
 terra::plot(dm[[1]], main="Domain")
-terra::plot(mm[[1]], main="Mahalanobis ")
+terra::plot(mm[[1]], main="Mahalanobis")
+terra::plot(km[[1]], main="Kernel")
 terra::plot(mv[[1]], main="Multivariate Normal")
 ```
 
 
-# TO DO
+## TO DO
 
 - ~~Add multivariate normal distribution~~
 - ~~Maybe add resampling to Mahalanobis (needs to estimate covariance)~~
