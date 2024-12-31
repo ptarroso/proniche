@@ -2,7 +2,7 @@
 \alias{model}
 \title{Compute model}
 \description{
-  Compute model predictions based on environmental variables and a selected modeling method.
+  Compute presence-only model predictions based on environmental variables and a specified modeling method.
 }
 \usage{
   model(vals, vars, method = "bioclim")
@@ -10,21 +10,33 @@
 \arguments{
   \item{vals}{numeric values of the variables at the presence points.}
 
-  \item{vars}{SpatRaster object with the variables onto which to obtain the model predictions.}
+  \item{vars}{SpatRaster object with the variables onto which to map the model predictions.}
 
-  \item{method}{character value indicating the method for computing the model. Available options are "bioclim" (the default), "convexhull", "kernel", "domain", or "mvnormal".}
+  \item{method}{character value indicating the method for computing the model. Available options are "bioclim" (the default), "convexhull", "domain", "mahalanobis", "kernel" or "mvnormal". Partial argument matching is used, i.e. you can use e.g. method="mahal".}
 }
 \value{
   A list containing the prediction and model-specific parameters, depending on the chosen method.
 }
 \examples{
 \dontrun{
-  # Example data
+  # Get some predictor variables:
   library(terra)
-  vals <- matrix(runif(50), ncol = 2)
-  vars <- rast(matrix(runif(100), ncol = 10))
+  elevation <- terra::rast(system.file("ex/elev.tif", package="terra"))
+  slope <- terra::terrain(elev, v = "slope")
+  roughness <- terra::terrain(elev, v = "roughness")
+  vars <- c(elevation, slope, roughness)
+  plot(vars)
 
-  result <- model(vals, vars, method = "bioclim")
+  # Get some random presence points and their variables values:
+  vars_coords <- terra::crds(vars)
+  set.seed(123)
+  pres_coords <- vars_coords[sample(1:nrow(vars_coords), 20, replace = FALSE), ]
+  vals <- terra::extract(vars, pres_coords)
+  head(vals)
+
+  # Compute a model:
+  mod <- model(vals, vars, method = "mahalanobis")
+  terra::plot(mod[[1]])
 }
 }
 \seealso{
