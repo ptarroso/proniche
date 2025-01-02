@@ -11,7 +11,7 @@ from the presence sites, with no background or pseudo-absence data):
 - Convex hull (in environmental space)
 - Domain
 - Mahalanobis distance
-- Kernel
+- Kernel density estimate
 - Multivariate normal distribution
 
 ## Usage

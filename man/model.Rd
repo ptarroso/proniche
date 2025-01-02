@@ -18,7 +18,7 @@ Implemented methods are:
     \item{Convex hull (in environmental space)}
     \item{Domain (Carpenter et al., 1993)}
     \item{Mahalanobis distance (Farber & Kadmon, 2003)}
-    \item{Kernel density estimate}
+    \item{Kernel density estimate (using ks::kde())}
     \item{Multivariate normal distribution}
   }
 }
