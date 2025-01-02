@@ -1,8 +1,8 @@
 Package: proniche
 Type: Package
 Title: PResence-Only NICHE modelling
-Version: 0.1
-Date: 2024-12-31
+Version: 0.2
+Date: 2025-01-02
 Authors@R: c(person(given = "Pedro",
                     family = "Tarroso",
                     role = "aut"),
@@ -20,7 +20,7 @@ Imports: terra,
          ks
 Suggests: 
 Encoding: UTF-8
-Description: Functions to compute truly presence-only ecological niche models (ENMs) or species distribution models (SDM).
+Description: Functions to compute truly presence-only ecological niche models (ENMs) and species distribution models (SDM).
 License: GPL-3
 URL: https://github.com/ptarroso/proniche
 

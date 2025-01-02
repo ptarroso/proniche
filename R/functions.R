@@ -1,5 +1,5 @@
 # all functions by Pedro Tarroso
-# some slightly edited by A. Marcia Barbosa where indicated, to avoid errors
+# some edited by A. Marcia Barbosa where indicated, to avoid errors or to accommodate dataframe (not only SpatRaster) vars
 # not exported; called by wrapper function models()
 
 bioclim <- function(vals, vars, nq=10) {
@@ -33,8 +33,11 @@ convexHullModel <- function(vals, vars) {
   i <- 1
   while (nrow(vals) > 4) {
     ch <- geometry::convhulln(vals)
-    values(pred) <- values(pred) + geometry::inhulln(ch, data)
-    vals <- vals[-unique(ch),]
+    if (inherits(pred, "SpatRaster"))   # (AMB added)
+      values(pred) <- values(pred) + geometry::inhulln(ch, data)
+    else pred <- pred + geometry::inhulln(ch, data)
+    # vals <- vals[-unique(ch),]
+    vals <- vals[-unique(ch), , drop = FALSE]  # (AMB edited)
     env_ch[[i]] <- ch
     i <- i + 1
   }
@@ -42,9 +45,9 @@ convexHullModel <- function(vals, vars) {
 }
 
 # Probably Only works with max of 6 variables
-kernelModel <- function(vals, vars) {
+kernelModel <- function(vals, vars, ...) {
   # k <- ks::kde(vals, compute.cont=FALSE, approx.cont=TRUE)
-  k <- ks::kde(as.matrix(vals), compute.cont=FALSE, approx.cont=TRUE)  # (AMB edited)
+  k <- ks::kde(as.matrix(vals), compute.cont=FALSE, approx.cont=TRUE, ...)  # (AMB edited)
   x <- as.data.frame(vars, na.rm=F)
   mask <- is.na(rowSums(x))
   pred <- vars[[1]]
@@ -75,7 +78,9 @@ domainmodel <- function(vals, vars) {
     D[i] <- max(1-G, na.rm=T)
   }
   pred <- vars[[1]] * NA
-  values(pred) <- D
+  if (inherits(pred, "SpatRaster"))   # (AMB added)
+    terra::values(pred) <- D
+  else pred <- D  # (AMB edited)
   list(pred)
 }
 
@@ -94,8 +99,13 @@ mahalanobisModel <- function(vals, vars) {
   for (i in which(mask)) {
     M[i] <- mah.dist(unlist(data[i,]), u, sigma)
   }
-  pred <- vars[[1]] * NA
-  values(pred) <- 1 - (M/max(M, na.rm=T))
+  # values(pred) <- 1 - (M/max(M, na.rm=T))
+  p <- 1 - (M/max(M, na.rm=T))  # (AMB edited)
+  if (inherits(vars, "SpatRaster")) {  # (AMB added)
+    pred <- vars[[1]] * NA
+    terra::values(pred) <- p  # (AMB edited)
+  }
+  else pred <- p  # (AMB edited)
   list(pred)
 }
 
@@ -129,8 +139,13 @@ mvnormalModel <- function(vals, vars) {
   avg <- colMeans(vals, na.rm=T)
   sig <- stats::cov(vals)
 
-  pred <- vars[[1]] * NA
-  values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
+  # values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
+  p <- dmnorm(data[mask,], avg, sig)
+  if (inherits(vars, "SpatRaster")) {  # (AMB added)
+    pred <- vars[[1]] * NA
+    values(pred)[mask,] <- p  # (AMB edited)
+  }
+  else pred <- p  # (AMB added)
   list(pred, list(avg, sig))
 }
 

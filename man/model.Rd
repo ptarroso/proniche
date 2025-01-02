@@ -2,7 +2,17 @@
 \alias{model}
 \title{Compute model}
 \description{
-  Compute presence-only model predictions based on environmental variables at presence sites and a specified modeling method. Implemented methods are
+  Compute presence-only model predictions based on environmental variables at presence sites, using a specified modeling method.}
+\usage{
+  model(vals, vars, method = "bioclim")
+}
+\arguments{
+  \item{vals}{data frame with the values of the variables at the presence localities. Column names must match the names of the corresponding variables in 'vars'.}
+  \item{vars}{SpatRaster or data frame with the variables onto which to obtain the model predictions.}
+  \item{method}{method for computing the model. Available options are "bioclim" (the default), "convexhull", "domain", "mahalanobis", "kernel" or "mvnormal" (see Details). Case is ignored and partial argument matching is used (i.e., you can set e.g. method="Mahal").}
+}
+\details{
+Implemented methods are:
   \itemize{
     \item{Bioclim (Nix, 1986; Booth et al., 2014)}
     \item{Convex hull (in environmental space)}
@@ -12,33 +22,23 @@
     \item{Multivariate normal distribution}
   }
 }
-\usage{
-  model(vals, vars, method = "bioclim")
-}
-\arguments{
-  \item{vals}{numeric values of the variables at the presence points.}
-
-  \item{vars}{SpatRaster object with the variables onto which to map the model predictions.}
-
-  \item{method}{character value indicating the method for computing the model. Available options are "bioclim" (the default), "convexhull", "domain", "mahalanobis", "kernel" or "mvnormal" (see Description). Partial argument matching is used, i.e. you can use e.g. method="mahal".}
-}
 \value{
-  A list containing the prediction and model-specific parameters, depending on the chosen method.
+  A list whose first element is the prediction (a SpatRaster if 'vars' is of this class, or a numeric vector otherwise). There may be more elements containing model-specific parameters, depending on the chosen 'method'.
 }
 \note{
-  Some of these methods are sensitive to sampling and to outliers.
+  Some of these methods are quite sensitive to outliers and to sampling representation.
 }
 \examples{
 \dontrun{
   # Get some predictor variables:
   library(terra)
-  elevation <- terra::rast(system.file("ex/elev.tif", package="terra"))
-  slope <- terra::terrain(elev, v = "slope")
-  roughness <- terra::terrain(elev, v = "roughness")
+  elevation <- terra::rast(system.file("ex/elev.tif", package = "terra"))
+  slope <- terra::terrain(elevation, v = "slope")
+  roughness <- terra::terrain(elevation, v = "roughness")
   vars <- c(elevation, slope, roughness)
   plot(vars)
 
-  # Get some random presence points and their variables values:
+  # Get some hypothetical (random) presence points and their variables values:
   vars_coords <- terra::crds(vars)
   set.seed(123)
   pres_coords <- vars_coords[sample(1:nrow(vars_coords), 20, replace = FALSE), ]
@@ -65,7 +65,6 @@ Nix, H.A. (1986) A biogeographic analysis of Australian elapid snakes. Atlas of 
 }
 \keyword{models}
 \keyword{spatial}
-\keyword{multivariate}
 \keyword{prediction}
 \author{
 Pedro Tarroso and A. Marcia Barbosa
