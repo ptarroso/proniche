@@ -2,6 +2,8 @@
 
 -   renamed function `model()` to `promodel()`
 
+-   added arguments `na.rm`, `dup.rm` and `verbosity` to `promodel()`
+
 -   added function `quantReclass()`
 
 

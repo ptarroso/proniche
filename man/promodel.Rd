@@ -4,12 +4,16 @@
 \description{
   Compute presence-only model predictions based on environmental variables at species occurrence sites, using a specified modeling method.}
 \usage{
-  promodel(vals, vars, method = "bioclim")
+  promodel(vals, vars, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
+  verbosity = 2)
 }
 \arguments{
   \item{vals}{data frame with the values of the variables at the presence localities. Column names must match the names of the corresponding variables in 'vars'.}
   \item{vars}{SpatRaster or data frame with the variables onto which to obtain the model predictions.}
   \item{method}{method for computing the model. Available options are "bioclim" (the default), "convexhull", "domain", "mahalanobis", "kernel" or "mvnormal" (see Details). Case is ignored and partial argument matching is used (i.e., you can set e.g. method="Mahal").}
+  \item{na.rm}{logical (default TRUE), whether to remove rows with missing values in 'vals'. Otherwise, some methods may produce an error or empty results.}
+  \item{dup.rm}{logical (default FALSE), whether to remove rows with duplicate values for all variables in 'vals'.}
+  \item{verbosity}{numeric value indicating the amount of messages to display; currently meaningful values are 0, 1, and 2 (the default).}
 }
 \details{
 Implemented methods are:

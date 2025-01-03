@@ -97,8 +97,8 @@ terra::plot(mv_rcl, type = "continuous", main="Multivariate Normal")
 
 - ~~Add documentation and references to original model publications~~
 
-- Maybe some accessory functions to clean data set? (Remove duplicates,
-  NAs, etc)
+- ~~Maybe some accessory functions to clean data set? (Remove
+  duplicates, NAs, etc)~~
 
 - ~~Instead of receiving coordinates as input, perhaps modelling
   functions should get already the environmental values at presences?~~

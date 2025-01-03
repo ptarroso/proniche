@@ -1,6 +1,5 @@
 library(terra)
 library(proniche)
-library(modEvA)
 
 methods <- c("bioclim", "domain", "convexhull",
              "mahalanobis", "kernel", "mvnormal")
@@ -14,14 +13,20 @@ chilus <- read.csv("GIS/chilus.csv", sep = ";")
 vals <- terra::extract(vars, chilus, ID=FALSE)
 head(vals)
 
+# test with only 2 variables:
 # vals <- vals[,1:2]
 # vars <- vars[[1:2]]
 
-vals <- vals[,1,drop=F]
-vars <- vars[[1]]
+# test with only 1 variable:
+# vals <- vals[,1,drop=F]
+# vars <- vars[[1]]
 
 terra::plot(vars)
 names(vars)
+
+# test with NAs:
+vals[1:3, 1:3] <- NA
+head(vals)
 
 bc <- promodel(vals, vars, method = "bioclim")
 ch <- promodel(vals, vars, method = "convexhull")
