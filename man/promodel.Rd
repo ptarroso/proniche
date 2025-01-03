@@ -1,10 +1,10 @@
-\name{model}
-\alias{model}
+\name{promodel}
+\alias{promodel}
 \title{Compute model}
 \description{
   Compute presence-only model predictions based on environmental variables at presence sites, using a specified modeling method.}
 \usage{
-  model(vals, vars, method = "bioclim")
+  promodel(vals, vars, method = "bioclim")
 }
 \arguments{
   \item{vals}{data frame with the values of the variables at the presence localities. Column names must match the names of the corresponding variables in 'vars'.}
@@ -46,7 +46,7 @@ Implemented methods are:
   head(vals)
 
   # Compute a model:
-  mod <- model(vals, vars, method = "mahalanobis")
+  mod <- promodel(vals, vars, method = "mahalanobis")
   terra::plot(mod[[1]])
 }
 }

@@ -1,4 +1,4 @@
-model <- function(vals, vars, method = "bioclim") {
+promodel <- function(vals, vars, method = "bioclim") {
 
   # version 1.1 (2 Jan 2025)
 

@@ -1,4 +1,5 @@
-export(model)
+export(promodel)
+export(quantReclass)
 import(terra)
 importFrom("geometry", "convhulln", "inhulln")
 importFrom("ks", "kde")

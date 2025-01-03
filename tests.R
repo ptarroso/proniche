@@ -1,3 +1,7 @@
+library(terra)
+library(proniche)
+library(modEvA)
+
 methods <- c("bioclim", "domain", "convexhull",
              "mahalanobis", "kernel", "mvnormal")
 
@@ -6,22 +10,39 @@ methods[3]
 tmp <- terra::rast(c("GIS/wc2.0_bio_5m_01.tif", "GIS/wc2.0_bio_5m_06.tif"))
 prc <- terra::rast(c("GIS/wc2.0_bio_5m_12.tif", "GIS/wc2.0_bio_5m_14.tif"))
 vars <- c(tmp, prc)
+chilus <- read.csv("GIS/chilus.csv", sep = ";")
 vals <- terra::extract(vars, chilus, ID=FALSE)
+head(vals)
+
 # vals <- vals[,1:2]
 # vars <- vars[[1:2]]
+
 vals <- vals[,1,drop=F]
 vars <- vars[[1]]
-head(vals)
-plot(vars)
+
+terra::plot(vars)
 names(vars)
 
-plot(model(vals, vars, method = methods[1])[[1]])
-plot(model(vals, vars, method = methods[2])[[1]])
-plot(model(vals, vars, method = methods[3])[[1]])
-plot(model(vals, vars, method = methods[4])[[1]])
-plot(model(vals, vars, method = methods[5])[[1]])
-plot(model(vals, vars, method = methods[6])[[1]])
+bc <- promodel(vals, vars, method = "bioclim")
+ch <- promodel(vals, vars, method = "convexhull")
+dm <- promodel(vals, vars, method = "domain")
+mm <- promodel(vals, vars, method = "mahalanobis")
+km <- promodel(vals, vars, method = "kernel")
+mv <- promodel(vals, vars, method = "mvnormal")
 
+plot(bc[[1]], main = "bioclim")
+plot(ch[[1]], main = "convexhull")
+plot(dm[[1]], main = "domain")
+plot(mm[[1]], main = "mahalanobis")
+plot(km[[1]], main = "kernel")
+plot(mv[[1]], main = "mvnormal")
+
+plot(quantReclass(bc[[1]]), type = "continuous", main = "bioclim")
+plot(quantReclass(ch[[1]]), type = "continuous", main = "convexhull")
+plot(quantReclass(dm[[1]]), type = "continuous", main = "domain")
+plot(quantReclass(mm[[1]]), type = "continuous", main = "mahalanobis")
+plot(quantReclass(km[[1]]), type = "continuous", main = "kernel")
+plot(quantReclass(mv[[1]]), type = "continuous", main = "mvnormal")
 
 
 # test SpatRaster vs. df input ####
@@ -35,8 +56,8 @@ method <- methods[4]
 method <- methods[5]
 method <- methods[6]
 
-m1 <- model(vals = vals, method = method, vars = layers_cut)
-m2 <- model(vals = vals, method = method, vars = dat)
+m1 <- promodel(vals = vals, method = method, vars = layers_cut)
+m2 <- promodel(vals = vals, method = method, vars = dat)
 
 summary(m1[[1]])
 as.matrix(summary(m2[[1]]))
