@@ -13,7 +13,7 @@
   \item{method}{method for computing the model. Available options are "bioclim" (the default), "convexhull", "domain", "mahalanobis", "kernel" or "mvnormal" (see Details). Case is ignored and partial argument matching is used (i.e., you can set e.g. method="Mahal").}
   \item{na.rm}{logical (default TRUE), whether to remove rows with missing values in 'vals'. Otherwise, some methods may produce an error or empty results.}
   \item{dup.rm}{logical (default FALSE), whether to remove rows with duplicate values for all variables in 'vals'.}
-  \item{verbosity}{numeric value indicating the amount of messages to display; currently meaningful values are 0, 1, and 2 (the default).}
+  \item{verbosity}{numeric value indicating the amount of messages to display. The default is 2, for the maximum number of messages available.}
 }
 \details{
 Implemented methods are:
