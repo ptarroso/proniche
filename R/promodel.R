@@ -35,8 +35,8 @@ promodel <- function(vals, vars, method = "bioclim") {
     mahalanobisModel(vals, vars)
 
   else if (method == "kernel") {
-    # if (ncol(vals) > 6)
-    #   stop ("Kernel density estimate is only implemented for up to 6 variables.")
+    if (ncol(vals) > 6)
+      stop ("Kernel density estimate is only implemented for up to 6 variables\n(see ?ks::kde)")
     if (ncol(vals) > 4) {
       message ("Setting binned=FALSE, as required by ks::kde() when >4 variables.\nThis is computationally intensive!")
       # otherwise:

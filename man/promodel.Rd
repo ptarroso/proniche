@@ -1,8 +1,8 @@
 \name{promodel}
 \alias{promodel}
-\title{Compute model}
+\title{Compute presence-only model}
 \description{
-  Compute presence-only model predictions based on environmental variables at presence sites, using a specified modeling method.}
+  Compute presence-only model predictions based on environmental variables at species occurrence sites, using a specified modeling method.}
 \usage{
   promodel(vals, vars, method = "bioclim")
 }
@@ -15,10 +15,10 @@
 Implemented methods are:
   \itemize{
     \item{Bioclim (Nix, 1986; Booth et al., 2014)}
-    \item{Convex hull (in environmental space)}
+    \item{Convex hull in environmental space (using \code{\link[geometry:convhulln]{geometry::convhulln()}} and \code{\link[geometry:inhulln]{geometry::inhulln()}})}
     \item{Domain (Carpenter et al., 1993)}
     \item{Mahalanobis distance (Farber & Kadmon, 2003)}
-    \item{Kernel density estimate (using ks::kde())}
+    \item{Kernel density estimate (using \code{\link[ks:kde]{ks::kde()}}}
     \item{Multivariate normal distribution}
   }
 }
@@ -51,7 +51,7 @@ Implemented methods are:
 }
 }
 \seealso{
-\code{\link[dismo:bioclim]{dismo::bioclim()}}, \code{\link[predicts:envelope]{predicts::envelope()}}, \code{\link[geometry:convhulln]{geometry::convhulln()}}, \code{\link[ks:kde]{ks::kde()}}
+\code{\link{quantReclass}}; \code{\link[dismo:bioclim]{dismo::bioclim()}}, \code{\link[predicts:envelope]{predicts::envelope()}}, \code{\link[geometry:convhulln]{geometry::convhulln()}}, \code{\link[ks:kde]{ks::kde()}}
 }
 \references{
 Booth T.H., Nix H.A., Busby J.R. & Hutchinson M.F. (2014) bioclim: the first species distribution modelling package, its early applications and relevance to most current MaxEnt studies. Diversity & Distributions, 20(1):1-9
