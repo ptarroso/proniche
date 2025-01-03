@@ -39,13 +39,14 @@ terra::plot(vars)
 
 chilus <- read.csv("GIS/chilus.csv", sep=";")
 vals <- terra::extract(vars, chilus, ID=FALSE)
-terra::plot(vars[[1]] * 0, col = "grey", legend = FALSE, main = "Presences")
+terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue", 
+            legend = FALSE, main = "Presences")
 points(chilus, pch = 20, cex = 0.2)
 ```
 
 <img src="man/figures/README-usage-2.png" width="100%" />
 
-### Compute model predictions
+### Get model predictions
 
 ``` r
 bc <- promodel(vals, vars, method = "bioclim")
@@ -77,15 +78,28 @@ km_rcl <- quantReclass(km[[1]])
 mv_rcl <- quantReclass(mv[[1]])
 
 par(mfrow = c(2, 3))
-terra::plot(bc_rcl, type = "continuous", main="Bioclim")
-terra::plot(ch_rcl, type = "continuous", main="Convex Hull")
-terra::plot(dm_rcl, type = "continuous", main="Domain")
-terra::plot(mm_rcl, type = "continuous", main="Mahalanobis")
-terra::plot(km_rcl, type = "continuous", main="Kernel")
-terra::plot(mv_rcl, type = "continuous", main="Multivariate Normal")
+terra::plot(bc_rcl, range = c(0, 1), type = "continuous", main="Bioclim")
+terra::plot(ch_rcl, range = c(0, 1), type = "continuous", main="Convex Hull")
+terra::plot(dm_rcl, range = c(0, 1), type = "continuous", main="Domain")
+terra::plot(mm_rcl, range = c(0, 1), type = "continuous", main="Mahalanobis")
+terra::plot(km_rcl, range = c(0, 1), type = "continuous", main="Kernel")
+terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main="Multivariate Normal")
 ```
 
 <img src="man/figures/README-reclass-1.png" width="100%" />
+
+### Ensemble predictions
+
+``` r
+preds <- c(bc_rcl, ch_rcl, dm_rcl, mm_rcl, km_rcl, mv_rcl)
+ens_mean <- terra::app(preds, "mean")
+ens_var <- terra::app(preds, "var")
+par(mfrow = c(1, 2))
+terra::plot(ens_mean, range = c(0, 1), main = "Ensemble mean")
+terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")
+```
+
+<img src="man/figures/README-ensemble-1.png" width="100%" />
 
 ## TO DO
 
