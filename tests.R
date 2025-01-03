@@ -28,12 +28,16 @@ names(vars)
 vals[1:3, 1:3] <- NA
 head(vals)
 
-bc <- promodel(vals, vars, method = "bioclim")
-ch <- promodel(vals, vars, method = "convexhull")
-dm <- promodel(vals, vars, method = "domain")
-mm <- promodel(vals, vars, method = "mahalanobis")
-km <- promodel(vals, vars, method = "kernel")
-mv <- promodel(vals, vars, method = "mvnormal")
+# test duplicates:
+vals[nrow(vals) + 1, ] <- vals[nrow(vals), ]
+tail(vals)
+
+bc <- promodel(vals, vars, method = "bioclim", dup.rm=T)
+ch <- promodel(vals, vars, method = "convexhull", dup.rm=T)
+dm <- promodel(vals, vars, method = "domain", dup.rm=T)
+mm <- promodel(vals, vars, method = "mahalanobis", dup.rm=T)
+km <- promodel(vals, vars, method = "kernel", dup.rm=T)
+mv <- promodel(vals, vars, method = "mvnormal", dup.rm=T)
 
 plot(bc[[1]], main = "bioclim")
 plot(ch[[1]], main = "convexhull")

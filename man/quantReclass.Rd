@@ -2,7 +2,7 @@
 \alias{quantReclass}
 \title{Reclassify based on quantiles}
 \description{
-This function takes the continuous predictions of a model of suitability (e.g. any of the models implemented in \code{\link{promodel}}, or the continuous Bioclim envelope model computed by the \code{bioclim} function of the \pkg{dismo} package or with the \code{envelope} function of the \pkg{predicts} package), and reclassifies them according to their quantiles.
+This function takes the continuous predictions of a model of environmental suitability (e.g. any of the models implemented in \code{\link{promodel}}, or the continuous Bioclim envelope model computed by the \code{bioclim} function of the \pkg{dismo} package or by the \code{envelope} function of the \pkg{predicts} package), and it reclassifies the values according to their quantiles, to re-scale them onto the [0,1] interval.
 }
 \usage{
 quantReclass(pred, by = 0.01, na.rm = TRUE)
