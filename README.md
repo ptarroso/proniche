@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# proniche: PRresence-Only NICHE modelling
+# proniche: PResence-Only NICHE modelling
 
 R package for computing niche models using a variety of **truly
 presence-only methods** (i.e., methods that use only environmental info

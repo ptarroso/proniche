@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# proniche: PRresence-Only NICHE modelling
+# proniche: PResence-Only NICHE modelling
 
 R package for computing niche models using a variety of **truly presence-only methods** (i.e., methods that use only environmental info from the presence sites, with no background or pseudo-absence data):
 
