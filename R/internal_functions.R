@@ -1,4 +1,4 @@
-# all functions by Pedro Tarroso
+# all functions (except the last one, dataPrune) by Pedro Tarroso
 # some edited by A. Marcia Barbosa where indicated, to avoid errors or to accommodate dataframe (not only SpatRaster) vars
 # not exported; called by wrapper function models()
 
@@ -32,9 +32,10 @@ convexHullModel <- function(vals, vars) {
   env_ch <- list()
   i <- 1
   while (nrow(vals) > 4) {
+    # message("i =", i, "; ", nrow(vals), "rows remaining...")   # (AMB added)
     ch <- geometry::convhulln(vals)
     if (inherits(pred, "SpatRaster"))   # (AMB added)
-      values(pred) <- values(pred) + geometry::inhulln(ch, data)
+      terra::values(pred) <- terra::values(pred) + geometry::inhulln(ch, data)
     else pred <- pred + geometry::inhulln(ch, data)
     # vals <- vals[-unique(ch),]
     vals <- vals[-unique(ch), , drop = FALSE]  # (AMB edited)
@@ -143,7 +144,7 @@ mvnormalModel <- function(vals, vars) {
   p <- dmnorm(data[mask,], avg, sig)
   if (inherits(vars, "SpatRaster")) {  # (AMB added)
     pred <- vars[[1]] * NA
-    values(pred)[mask,] <- p  # (AMB edited)
+    terra::values(pred)[mask,] <- p  # (AMB edited)
   }
   else pred <- p  # (AMB added)
   list(pred, list(avg, sig))
@@ -161,5 +162,26 @@ envResample <- function(vals, vars, maxsample=50) {
     colnames(data.new) <- colnames(vals)
     vals <- rbind(vals, data.new)
   }
+  vals
+}
+
+
+dataPrune <- function(vals, na.rm = TRUE, dup.rm = FALSE, verbosity = 2) {
+  if (isTRUE(na.rm)) {
+    n_in <- nrow(vals)
+    vals <- na.omit(vals)
+    n_out <- nrow(vals)
+    if (verbosity > 1 && n_in > n_out)
+      message(n_in - n_out, " rows removed due to missing data in 'vals'.")
+  }
+
+  if (isTRUE(dup.rm)) {
+    n_in <- nrow(vals)
+    vals <- unique(vals)
+    n_out <- nrow(vals)
+    if (verbosity > 1 && n_in > n_out)
+      message(n_in - n_out, " rows removed due to duplicate 'vals'.")
+  }
+
   vals
 }

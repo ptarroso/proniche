@@ -5,23 +5,10 @@ promodel <- function(vals, vars, method = "bioclim", na.rm = TRUE, dup.rm = FALS
   method <- tolower(method)
   method <- match.arg(method, choices = c("bioclim", "domain", "convexhull", "mahalanobis", "kernel", "mvnormal"))
 
-  if (isTRUE(na.rm)) {
-    n_in <- nrow(vals)
-    vals <- na.omit(vals)
-    n_out <- nrow(vals)
-    if (verbosity > 1 && n_in > n_out)
-      message(n_in - n_out, " rows removed due to missing data in 'vals'.")
-  }
+  vals <- as.data.frame(vals)
 
-  if (isTRUE(dup.rm)) {
-    n_in <- nrow(vals)
-    vals <- unique(vals)
-    n_out <- nrow(vals)
-    if (verbosity > 1 && n_in > n_out)
-      message(n_in - n_out, " rows removed due to duplicate 'vals'.")
-  }
+  vals <- dataPrune(vals, na.rm = na.rm, dup.rm = dup.rm, verbosity = verbosity)
 
-  vals <- as.data.frame(vals)  # else errors for some methods if only one variable
   if (inherits(vars, "SpatRaster")) vars <- vars[[names(vals)]]
   else vars <- vars[ , names(vals), drop = FALSE]
 
