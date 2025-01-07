@@ -1,8 +1,8 @@
 Package: proniche
 Type: Package
 Title: PResence-Only NICHE modelling
-Version: 0.3
-Date: 2025-01-03
+Version: 0.4
+Date: 2025-01-07
 Authors@R: c(person(given = "Pedro",
                     family = "Tarroso",
                     role = "aut"),
