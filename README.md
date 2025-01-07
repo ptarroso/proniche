@@ -46,6 +46,15 @@ points(chilus, pch = 20, cex = 0.2)
 
 <img src="man/figures/README-usage-2.png" width="100%" />
 
+### Plot frequency distributions
+
+``` r
+par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
+freqPlot(vals, vars)
+```
+
+<img src="man/figures/README-freqPlot-1.png" width="100%" />
+
 ### Get model predictions
 
 ``` r
@@ -57,12 +66,12 @@ km <- promodel(vals, vars, method = "kernel")
 mv <- promodel(vals, vars, method = "mvnormal")
 
 par(mfrow = c(2, 3))
-terra::plot(bc[[1]], main="Bioclim")
-terra::plot(ch[[1]], main="Convex Hull")
-terra::plot(dm[[1]], main="Domain")
-terra::plot(mm[[1]], main="Mahalanobis")
-terra::plot(km[[1]], main="Kernel")
-terra::plot(mv[[1]], main="Multivariate Normal")
+terra::plot(bc[[1]], type = "continuous", main="Bioclim")
+terra::plot(ch[[1]], type = "continuous", main="Convex Hull")
+terra::plot(dm[[1]], type = "continuous", main="Domain")
+terra::plot(mm[[1]], type = "continuous", main="Mahalanobis")
+terra::plot(km[[1]], type = "continuous", main="Kernel")
+terra::plot(mv[[1]], type = "continuous", main="Multivariate Normal")
 ```
 
 <img src="man/figures/README-model-1.png" width="100%" />
