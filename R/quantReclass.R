@@ -2,7 +2,7 @@ quantReclass <- function(pred, # numeric vector, RasterLayer or SpatRaster
                          by = 0.01, # percentiles by default
                          na.rm = TRUE) {
 
-  # code created in Formoso-Freire et al.
+  # code created in Formoso-Freire et al. 2023 (https://doi.org/10.1016/j.biocon.2023.110361)
   # version 1.1 (03 Jan 2025)
 
   # if (min(pred, na.rm = TRUE) < 0 || max(pred, na.rm = TRUE) > 1) stop ("'pred' should be between 0 and 1.")
@@ -22,9 +22,12 @@ quantReclass <- function(pred, # numeric vector, RasterLayer or SpatRaster
   from <- c(0, to[-length(to)])
   reclass_matrix <- as.matrix(cbind(from, to, probs))
 
-  if (inherits(pred, "SpatRaster")) result <- terra::classify(pred, reclass_matrix)
+  if (inherits(pred, "SpatRaster"))
+    result <- terra::classify(pred, reclass_matrix)
   # else if (is(pred, "RasterLayer")) result <- raster::reclassify(pred, reclass_matrix)  # implied declaring more imports; unnecessary
-  else if (inherits(pred, "numeric")) result <- reclass(pred, reclass_matrix)
+
+  else if (inherits(pred, "numeric"))
+    result <- reclass(pred, reclass_matrix)
 
   return(result)
 }
