@@ -121,14 +121,44 @@ convexhull_plot <- function(model, cols = 1:2, border = "red",
 
 
 # Probably Only works with max of 6 variables
-kernelModel <- function(vals, vars, ...) {
-    # k <- ks::kde(vals, compute.cont=FALSE, approx.cont=TRUE)
-    k <- ks::kde(as.matrix(vals), compute.cont = FALSE, approx.cont = TRUE, ...) # (AMB edited)
-    x <- as.data.frame(vars, na.rm = F)
-    mask <- is.na(rowSums(x))
-    pred <- vars[[1]]
-    pred[!mask] <- predict(k, x = x[!mask, ])
-    list(pred, k)
+kernel_model <- function(x, ...) {
+    x <- na.exclude(as.matrix(x))
+    k <- ks::kde(x, compute.cont = FALSE, approx.cont = TRUE, ...)
+    model <- list(
+        type = "kernel",
+        model = k,
+        x = x,
+        nvars = ncol(x)
+    )
+    class(model) <- "proniche"
+    return(model)
+}
+
+kernel_predict <- function(model, newdata = NULL) {
+    if (is.null(newdata)) {
+        data <- as.matrix(model$x)
+    } else {
+        data <- as.matrix(newdata)
+    }
+    data <- na.exclude(data)
+    pred <- rep(0, nrow(data))
+    pred <- predict(model$model, x = data)
+    return(pred)
+}
+
+kernel_plot <- function(model, cols = 1:2, contours = 10, border = "red",
+                        pnt.col = "gray", add = FALSE, ...) {
+    if (!add) {
+        plot(model$x[, cols], col = pnt.col, ...)
+    }
+    # To plot multidimensional data, it cuts predictions to provide contours
+    pred <- kernel_predict(model)
+    p <- seq(min(pred), max(pred), length.out = contours + 1)
+    for (i in 1:contours) {
+        pnt <- model$x[which(pred >= p[i]), cols]
+        ch <- chull(pnt)
+        polygon(pnt[ch, ], border = border, col = NA, ...)
+    }
 }
 
 gower <- function(x, train, rng = apply(train, 2, function(x) diff(range(x)))) {
