@@ -104,7 +104,7 @@ convexhull_predict <- function(model, newdata = NULL) {
 }
 
 convexhull_plot <- function(model, cols = 1:2, border = "red",
-                            pnt.col = "gray", add = TRUE, ...) {
+                            pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
     }
