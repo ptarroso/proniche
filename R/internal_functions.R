@@ -2,7 +2,7 @@
 # some edited by A. Marcia Barbosa where indicated, to avoid errors or to accommodate dataframe (not only SpatRaster) vars
 # not exported; called by wrapper function models()
 
-bioclim <- function(x, nq = 10) { # RENAME TO bioclim_model
+bioclim_model <- function(x, nq = 10) {
     qt <- seq(0, 0.5, length.out = nq)
     env_rect <- matrix(NA, nq, ncol(x) * 2 + 1) # (AMB edited)
     env_rect[, 1] <- qt
@@ -26,16 +26,20 @@ bioclim <- function(x, nq = 10) { # RENAME TO bioclim_model
 }
 
 # Vars is a matrix. predict should be aware of format and convert
-bioclim_predict <- function(model, vars) {
-    vars <- as.matrix(vars)
-    pred <- rep(0, nrow(vars))
+bioclim_predict <- function(model, newdata = NULL) {
+    if (is.null(newdata)) {
+        data <- model$x
+    } else {
+        data <- as.matrix(newdata)
+    }
+    pred <- rep(0, nrow(data))
     nvars <- model$nvars
     nq <- model$nq
     for (i in 1:nq) {
         tmp <- pred * 0
         rng <- matrix(model$model[i, -1], 2, nvars)
         for (j in 1:nvars) {
-            tmp <- tmp + (vars[, j] >= rng[1, j] & vars[, j] < rng[2, j])
+            tmp <- tmp + (data[, j] >= rng[1, j] & data[, j] < rng[2, j])
         }
         pred <- pred + (tmp == nvars)
     }
@@ -43,8 +47,8 @@ bioclim_predict <- function(model, vars) {
 }
 
 bioclim_plot <- function(model, cols = 1:2, border = "red",
-                         pnt.col = "gray", ...) {
-    if (is.null(dev.list())) {
+                         pnt.col = "gray", add = FALSE, ...) {
+    if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
     }
     for (i in 1:model$nq) {
