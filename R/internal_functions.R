@@ -2,28 +2,60 @@
 # some edited by A. Marcia Barbosa where indicated, to avoid errors or to accommodate dataframe (not only SpatRaster) vars
 # not exported; called by wrapper function models()
 
-bioclim <- function(vals, vars, nq = 10) {
+bioclim <- function(x, nq = 10) {
     qt <- seq(0, 0.5, length.out = nq)
-    # env_rect <- matrix(NA, nq, nlyr(vars)*2+1)
-    env_rect <- matrix(NA, nq, ncol(vals) * 2 + 1) # (AMB edited)
+    env_rect <- matrix(NA, nq, ncol(x) * 2 + 1) # (AMB edited)
     env_rect[, 1] <- qt
-    # colnames(env_rect) <- c("quantile", paste0(rep(names(vars), each=2), c("_min", "_max")))
-    colnames(env_rect) <- c("quantile", paste0(rep(colnames(vals), each = 2), c("_min", "_max"))) # (AMB edited)
-    pred <- vars[[1]] * 0
+    colnames(env_rect) <- c(
+        "quantile",
+        paste0(
+            rep(colnames(x), each = 2),
+            c("_min", "_max")
+        )
+    )
     for (i in 1:nq) {
-        rng <- apply(vals, 2, quantile, probs = c(qt[i], 1 - qt[i]))
+        rng <- apply(x, 2, quantile, probs = c(qt[i], 1 - qt[i]))
         env_rect[i, -1] <- as.vector(rng)
-        tmp <- pred * 0
-        # for (j in 1:nlyr(vars)) {
-        for (j in 1:ncol(vals)) { # (AMB edited)
-            tmp <- tmp + (vars[[j]] >= rng[1, j] & vars[[j]] < rng[2, j])
-        }
-        # pred <- pred + (tmp == nlyr(vars))
-        pred <- pred + (tmp == ncol(vals)) # (AMB edited)
     }
-    list(pred, env_rect)
+    model <- list(
+        type = "bioclim", model = env_rect, x = x, nq = nq,
+        nvars = ncol(x)
+    )
+    class(model) <- "proniche"
+    return(model)
 }
 
+# Vars is a matrix. predict should be aware of format and convert
+bioclim_predict <- function(model, vars) {
+    pred <- rep(0, nrow(vars))
+    nvars <- model$nvars
+    nq <- model$nq
+    for (i in 1:nq) {
+        tmp <- pred * 0
+        rng <- matrix(model$model[i, -1], 2, nvars)
+        for (j in 1:nvars) {
+            tmp <- tmp + (vars[, j] >= rng[1, j] & vars[, j] < rng[2, j])
+        }
+        pred <- pred + (tmp == nvars)
+    }
+    return(pred)
+}
+
+bioclim_plot <- function(model, cols = 1:2, border = "red",
+                         pnt.col = "gray", ...) {
+    if (is.null(dev.list())) {
+        plot(model$x[, cols], col = pnt.col, ...)
+    }
+    for (i in 1:model$nq) {
+        rng <- matrix(model$model[i, -1], 2, model$nvars)
+        rect(rng[1, cols[1]],
+            rng[1, cols[2]],
+            rng[2, cols[1]],
+            rng[2, cols[2]],
+            border = border, ...
+        )
+    }
+}
 
 convexHullModel <- function(vals, vars) {
     vals <- as.matrix(vals)
