@@ -2,7 +2,7 @@
 # some edited by A. Marcia Barbosa where indicated, to avoid errors or to accommodate dataframe (not only SpatRaster) vars
 # not exported; called by wrapper function models()
 
-bioclim <- function(x, nq = 10) {
+bioclim <- function(x, nq = 10) { # RENAME TO bioclim_model
     qt <- seq(0, 0.5, length.out = nq)
     env_rect <- matrix(NA, nq, ncol(x) * 2 + 1) # (AMB edited)
     env_rect[, 1] <- qt
@@ -27,6 +27,7 @@ bioclim <- function(x, nq = 10) {
 
 # Vars is a matrix. predict should be aware of format and convert
 bioclim_predict <- function(model, vars) {
+    vars <- as.matrix(vars)
     pred <- rep(0, nrow(vars))
     nvars <- model$nvars
     nq <- model$nq
@@ -57,27 +58,63 @@ bioclim_plot <- function(model, cols = 1:2, border = "red",
     }
 }
 
-convexHullModel <- function(vals, vars) {
-    vals <- as.matrix(vals)
-    pred <- vars[[1]] * 0
-    data <- as.matrix(vars)
+convexhull_model <- function(x) {
+    x <- na.exclude(as.matrix(x))
+    original <- x
+    nvars <- ncol(x)
     env_ch <- list()
     i <- 1
-    while (nrow(vals) > 4) {
-        # message("i =", i, "; ", nrow(vals), "rows remaining...")   # (AMB added)
-        ch <- geometry::convhulln(vals)
-        if (inherits(pred, "SpatRaster")) { # (AMB added)
-            terra::values(pred) <- terra::values(pred) + geometry::inhulln(ch, data)
-        } else {
-            pred <- pred + geometry::inhulln(ch, data)
-        }
-        # vals <- vals[-unique(ch),]
-        vals <- vals[-unique(ch), , drop = FALSE] # (AMB edited)
+    id <- 1:nrow(x)
+    while (nrow(x) > nvars) {
+        ch <- geometry::convhulln(x)
+        # Have to redo the IDs in ch to map to the original matrix
+        attr(ch, "pid") <- matrix(id[ch], nrow(ch), ncol(ch))
+        rm <- unique(as.vector(ch))
+        x <- x[-rm, , drop = FALSE] # (AMB edited)
+        id <- id[-rm]
         env_ch[[i]] <- ch
         i <- i + 1
     }
-    list(pred, env_ch)
+    model <- list(
+        type = "convex_hull",
+        model = env_ch,
+        x = original,
+        nch = length(env_ch),
+        nvars = nvars
+    )
+    class(model) <- "proniche"
+    return(model)
 }
+
+convexhull_predict <- function(model, newdata = NULL) {
+    if (is.null(newdata)) {
+        data <- as.matrix(model$x)
+    } else {
+        data <- as.matrix(newdata)
+    }
+    pred <- rep(0, nrow(data))
+    for (i in 1:model$nch) {
+        pred <- pred + geometry::inhulln(model$model[[i]], data)
+    }
+    return(pred)
+}
+
+convexhull_plot <- function(model, cols = 1:2, border = "red",
+                            pnt.col = "gray", add = TRUE, ...) {
+    if (!add) {
+        plot(model$x[, cols], col = pnt.col, ...)
+    }
+    # The representation of high dimensional chulls is difficult...
+    # The trick used here is to check which points are within each
+    # chull and generate a 2D chull of those on the user defined dims
+    pred <- convexhull_predict(model)
+    for (i in 1:model$nch) {
+        pnt <- model$x[which(pred >= i), cols]
+        ch <- chull(pnt)
+        polygon(pnt[ch, ], border = border, col = NA, ...)
+    }
+}
+
 
 # Probably Only works with max of 6 variables
 kernelModel <- function(vals, vars, ...) {
