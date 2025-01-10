@@ -70,7 +70,7 @@ print.bioclim <- function(model) {
     print(paste(class(model), "model with", model$nq, "variables."))
 }
 
-convex_hull <- function(x) {
+convexhull <- function(x) {
     x <- na.exclude(as.matrix(x))
     original <- x
     nvars <- ncol(x)
@@ -93,11 +93,11 @@ convex_hull <- function(x) {
         nch = length(env_ch),
         nvars = nvars
     )
-    class(model) <- "convex_hull"
+    class(model) <- "convexhull"
     return(model)
 }
 
-predict.convex_hull <- function(model, newdata = NULL) {
+predict.convexhull <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
@@ -110,15 +110,15 @@ predict.convex_hull <- function(model, newdata = NULL) {
     return(pred)
 }
 
-plot.convex_hull <- function(model, cols = 1:2, border = "red",
-                             pnt.col = "gray", add = FALSE, ...) {
+plot.convexhull <- function(model, cols = 1:2, border = "red",
+                            pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
     }
     # The representation of high dimensional chulls is difficult...
     # The trick used here is to check which points are within each
     # chull and generate a 2D chull of those on the user defined dims
-    pred <- convexhull_predict(model)
+    pred <- predict(model)
     for (i in 1:model$nch) {
         pnt <- model$x[which(pred >= i), cols]
         ch <- chull(pnt)
@@ -126,7 +126,7 @@ plot.convex_hull <- function(model, cols = 1:2, border = "red",
     }
 }
 
-print.convex_hull <- function(model) {
+print.convexhull <- function(model) {
     print(paste(class(model), "model with", model$nq, "variables."))
 }
 
@@ -162,7 +162,7 @@ plot.kernel <- function(model, cols = 1:2, contours = 10, border = "red",
         plot(model$x[, cols], col = pnt.col, ...)
     }
     # To plot multidimensional data, it cuts predictions to provide contours
-    pred <- kernel_predict(model)
+    pred <- predict(model)
     p <- seq(min(pred), max(pred), length.out = contours + 1)
     for (i in 1:contours) {
         pnt <- model$x[which(pred >= p[i]), cols]
