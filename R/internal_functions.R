@@ -335,8 +335,8 @@ mvnormal_model <- function(x) {
     }
 
     # estimate mean value and covmat (sig)
-    avg <- colMeans(vals, na.rm = T)
-    sig <- stats::cov(vals)
+    avg <- colMeans(x, na.rm = T)
+    sig <- stats::cov(x)
 
     model <- list(
         type = "mvnormal",
@@ -358,7 +358,6 @@ mvnormal_predict <- function(model, newdata = NULL) {
     avg <- model$model$u
     sig <- model$model$sigma
 
-    # values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
     p <- dmnorm(data, avg, sig)
     return(p)
 }
@@ -399,7 +398,7 @@ dataPrune <- function(vals, na.rm = TRUE, dup.rm = FALSE, verbosity = 2) {
         vals <- na.omit(vals)
         n_out <- nrow(vals)
         if (verbosity > 1 && n_in > n_out) {
-            message(n_in - n_out, " rows removed due to missing data in 'vals'.")
+            message(n_in - n_out, " rows removed due to missing data.")
         }
     }
 
@@ -408,7 +407,7 @@ dataPrune <- function(vals, na.rm = TRUE, dup.rm = FALSE, verbosity = 2) {
         vals <- unique(vals)
         n_out <- nrow(vals)
         if (verbosity > 1 && n_in > n_out) {
-            message(n_in - n_out, " rows removed due to duplicate 'vals'.")
+            message(n_in - n_out, " rows removed due to duplicates.")
         }
     }
 
