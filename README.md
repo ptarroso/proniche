@@ -39,7 +39,7 @@ terra::plot(vars)
 
 chilus <- read.csv("GIS/chilus.csv", sep=";")
 vals <- terra::extract(vars, chilus, ID=FALSE)
-terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue", 
+terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
             legend = FALSE, main = "Presences")
 points(chilus, pch = 20, cex = 0.2)
 ```
@@ -55,15 +55,40 @@ freqPlot(vals, vars)
 
 <img src="man/figures/README-freqPlot-1.png" width="100%" />
 
-### Get model predictions
+### Build models
 
 ``` r
-bc <- promodel(vals, vars, method = "bioclim")
-ch <- promodel(vals, vars, method = "convexhull")
-dm <- promodel(vals, vars, method = "domain")
-mm <- promodel(vals, vars, method = "mahalanobis")
-km <- promodel(vals, vars, method = "kernel")
-mv <- promodel(vals, vars, method = "mvnormal")
+bc_fit <- promodel(vals, method = "bioclim")
+ch_fit <- promodel(vals, method = "convexhull")
+dm_fit <- promodel(vals, method = "domain")
+mm_fit <- promodel(vals, method = "mahalanobis")
+km_fit <- promodel(vals, method = "kernel")
+mv_fit <- promodel(vals, method = "mvnormal")
+```
+
+<img src="man/figures/README-buildmodel-1.png" width="100%" />
+
+### Check models
+``` r
+par(mfrow = c(2, 3))
+plot(bc_fit, main="Bioclim")
+plot(ch_fit, main="Convex Hull")
+plot(dm_fit, main="Domain")
+plot(mm_fit, main="Mahalanobis")
+plot(km_fit, main="Kernel")
+plot(mv_fit, main="Multivariate Normal")
+```
+
+<img src="man/figures/README-plotmodel-1.png" width="100%" />
+
+### Predict models
+``` r
+bc <- predict(bc_fit, vars)
+ch <- predict(ch_fit, vars)
+dm <- predict(dm_fit, vars)
+mm <- predict(mm_fit, vars)
+km <- predict(km_fit, vars)
+mv <- predict(mv_fit, vars)
 
 par(mfrow = c(2, 3))
 terra::plot(bc[[1]], type = "continuous", main="Bioclim")
@@ -74,7 +99,10 @@ terra::plot(km[[1]], type = "continuous", main="Kernel")
 terra::plot(mv[[1]], type = "continuous", main="Multivariate Normal")
 ```
 
-<img src="man/figures/README-model-1.png" width="100%" />
+<img src="man/figures/README-predictmodel-1.png" width="100%" />
+
+
+
 
 ### Reclassify predictions into comparable scale
 
@@ -126,7 +154,7 @@ terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")
 - ~~Instead of receiving coordinates as input, perhaps modelling
   functions should get already the environmental values at presences?~~
 
-- Function to plot models representation in environmental space?
+- ~~Function to plot models representation in environmental space?~~
 
 - ~~Implement for data frames (not just SpatRasters)~~
 
