@@ -366,7 +366,9 @@ mvnormal <- function(x) {
     if (nrow(data) < 5) {
         stop("Low number of samples. Consider resampling with envResample.")
     }
-
+    if (ncol(data) < 2) {
+        stop("input 'method' requires more than one variable.")
+    }
     # estimate mean value and covmat (sig)
     avg <- colMeans(x, na.rm = T)
     sig <- stats::cov(x)
