@@ -327,27 +327,54 @@ dmnorm <- function(x, mu, sigma) {
     return(dens / den)
 }
 
-mvnormalModel <- function(vals, vars) {
+mvnormal_model <- function(x) {
+    data <- na.exclude(as.matrix(x))
     # Stop if not enough data points
-    if (nrow(vals) < 5) {
-        stop("Very low number of samples. Consider resampling first with envResample.")
+    if (nrow(data) < 5) {
+        stop("Low number of samples. Consider resampling with envResample.")
     }
-    data <- as.data.frame(vars, na.rm = F)
-    mask <- !is.na(rowSums(data))
 
     # estimate mean value and covmat (sig)
     avg <- colMeans(vals, na.rm = T)
     sig <- stats::cov(vals)
 
-    # values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
-    p <- dmnorm(data[mask, ], avg, sig)
-    if (inherits(vars, "SpatRaster")) { # (AMB added)
-        pred <- vars[[1]] * NA
-        terra::values(pred)[mask, ] <- p # (AMB edited)
+    model <- list(
+        type = "mvnormal",
+        model = list(u = avg, sigma = sig),
+        x = x,
+        nvars = ncol(x)
+    )
+    class(model) <- "proniche"
+    return(model)
+}
+
+
+mvnormal_predict <- function(model, newdata = NULL) {
+    if (is.null(newdata)) {
+        data <- as.matrix(model$x)
     } else {
-        pred <- p
-    } # (AMB added)
-    list(pred, list(avg, sig))
+        data <- na.exclude(as.matrix(newdata))
+    }
+    avg <- model$model$u
+    sig <- model$model$sigma
+
+    # values(pred)[mask,] <- dmnorm(data[mask,], avg, sig)
+    p <- dmnorm(data, avg, sig)
+    return(p)
+}
+
+# contours are sdevs away from the mean
+mvnormal_plot <- function(model, cols = 1:2,
+                          contours = c(1, 1.64, 1.96, 2.33),
+                          border = "red", pnt.col = "gray", add = FALSE,
+                          ...) {
+    if (!add) {
+        plot(model$x[, cols], col = pnt.col, ...)
+    }
+    for (sdev in contours) {
+        pnt <- ellipse_from_cov(model$model$sigma, model$model$u, sdev, cols)
+        polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
+    }
 }
 
 # Adds samples to data by the nearest "maxsample" points to
