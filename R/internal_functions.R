@@ -100,13 +100,16 @@ convexhull <- function(x) {
 predict.convexhull <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
+        mask <- NULL
     } else {
         data <- as.matrix(newdata)
+        mask <- is.na(rowSums(data))
     }
     pred <- rep(0, nrow(data))
     for (i in 1:model$nch) {
         pred <- pred + geometry::inhulln(model$model[[i]], data)
     }
+    pred[mask] <- NA
     return(pred)
 }
 
@@ -147,12 +150,13 @@ kernel <- function(x, ...) {
 predict.kernel <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
+        mask <- NULL
     } else {
         data <- as.matrix(newdata)
+        mask <- is.na(rowSums(data))
     }
-    data <- na.exclude(data)
-    pred <- rep(0, nrow(data))
-    pred <- predict(model$model, x = data)
+    pred <- rep(NA, nrow(data))
+    pred[!mask] <- predict(model$model, x = data[!mask, ])
     return(pred)
 }
 
@@ -222,13 +226,15 @@ predict.domain <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
-        data <- na.exclude(as.matrix(newdata))
+        data <- as.matrix(newdata)
     }
     D <- rep(NA, nrow(data))
     for (i in 1:nrow(data)) {
-        G <- gower(unlist(data[i, ]), model$x, model$model)
-        G[which(G > 1)] <- 1
-        D[i] <- max(1 - G, na.rm = T)
+        if (!any(is.na(data[i, ]))) {
+            G <- gower(unlist(data[i, ]), model$x, model$model)
+            G[which(G > 1)] <- 1
+            D[i] <- max(1 - G, na.rm = T)
+        }
     }
     return(D)
 }
@@ -296,13 +302,14 @@ predict.mahalanobis <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
-        data <- na.exclude(as.matrix(newdata))
+        data <- as.matrix(newdata)
     }
+    mask <- is.na(rowSums(data))
     M <- rep(NA, nrow(data))
-    for (i in 1:length(M)) {
+    for (i in which(!mask)) {
         M[i] <- mah_dist(unlist(data[i, ]), model$model$u, model$model$sigma)
     }
-    p <- 1 - (M / max(M)) # (AMB edited)
+    p <- 1 - (M / max(M, na.rm = T)) # (AMB edited)
     return(p)
 }
 
@@ -371,7 +378,7 @@ predict.mvnormal <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
-        data <- na.exclude(as.matrix(newdata))
+        data <- as.matrix(newdata)
     }
     avg <- model$model$u
     sig <- model$model$sigma
