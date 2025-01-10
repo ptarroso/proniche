@@ -74,6 +74,7 @@ convexhull <- function(x) {
     x <- na.exclude(as.matrix(x))
     original <- x
     nvars <- ncol(x)
+    if (nvars < 2) stop("Convex hull requires more than one variable.")
     env_ch <- list()
     i <- 1
     id <- 1:nrow(x)
@@ -137,6 +138,12 @@ print.convexhull <- function(model) {
 # Probably Only works with max of 6 variables
 kernel <- function(x, ...) {
     x <- na.exclude(as.matrix(x))
+    if (ncol(x) > 6) {
+        warning(paste0(
+            "Kernel density estimate is only implemented for up to ",
+            "6 variables\n(see ?ks::kde)"
+        ))
+    }
     k <- ks::kde(x, compute.cont = FALSE, approx.cont = TRUE, ...)
     model <- list(
         model = k,
