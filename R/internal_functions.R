@@ -1,8 +1,10 @@
 # all functions (except the last one, dataPrune) by Pedro Tarroso
 # some edited by A. Marcia Barbosa where indicated, to avoid errors or to accommodate dataframe (not only SpatRaster) vars
 # not exported; called by wrapper function models()
+# Each model has a constructor that returns a class for use with generics "predict", "plot" & "print"
 
-bioclim_model <- function(x, nq = 10) {
+
+bioclim <- function(x, nq = 10) {
     qt <- seq(0, 0.5, length.out = nq)
     env_rect <- matrix(NA, nq, ncol(x) * 2 + 1) # (AMB edited)
     env_rect[, 1] <- qt
@@ -18,15 +20,17 @@ bioclim_model <- function(x, nq = 10) {
         env_rect[i, -1] <- as.vector(rng)
     }
     model <- list(
-        type = "bioclim", model = env_rect, x = x, nq = nq,
+        model = env_rect,
+        x = x,
+        nq = nq,
         nvars = ncol(x)
     )
-    class(model) <- "proniche"
+    class(model) <- "bioclim"
     return(model)
 }
 
 # Vars is a matrix. predict should be aware of format and convert
-bioclim_predict <- function(model, newdata = NULL) {
+predict.bioclim <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- model$x
     } else {
@@ -46,7 +50,7 @@ bioclim_predict <- function(model, newdata = NULL) {
     return(pred)
 }
 
-bioclim_plot <- function(model, cols = 1:2, border = "red",
+plot.bioclim <- function(model, cols = 1:2, border = "red",
                          pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
@@ -62,7 +66,11 @@ bioclim_plot <- function(model, cols = 1:2, border = "red",
     }
 }
 
-convexhull_model <- function(x) {
+print.bioclim <- function(model) {
+    print(paste(class(model), "model with", model$nq, "variables."))
+}
+
+convex_hull <- function(x) {
     x <- na.exclude(as.matrix(x))
     original <- x
     nvars <- ncol(x)
@@ -80,17 +88,16 @@ convexhull_model <- function(x) {
         i <- i + 1
     }
     model <- list(
-        type = "convex_hull",
         model = env_ch,
         x = original,
         nch = length(env_ch),
         nvars = nvars
     )
-    class(model) <- "proniche"
+    class(model) <- "convex_hull"
     return(model)
 }
 
-convexhull_predict <- function(model, newdata = NULL) {
+predict.convex_hull <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
@@ -103,8 +110,8 @@ convexhull_predict <- function(model, newdata = NULL) {
     return(pred)
 }
 
-convexhull_plot <- function(model, cols = 1:2, border = "red",
-                            pnt.col = "gray", add = FALSE, ...) {
+plot.convex_hull <- function(model, cols = 1:2, border = "red",
+                             pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
     }
@@ -119,22 +126,25 @@ convexhull_plot <- function(model, cols = 1:2, border = "red",
     }
 }
 
+print.convex_hull <- function(model) {
+    print(paste(class(model), "model with", model$nq, "variables."))
+}
+
 
 # Probably Only works with max of 6 variables
-kernel_model <- function(x, ...) {
+kernel <- function(x, ...) {
     x <- na.exclude(as.matrix(x))
     k <- ks::kde(x, compute.cont = FALSE, approx.cont = TRUE, ...)
     model <- list(
-        type = "kernel",
         model = k,
         x = x,
         nvars = ncol(x)
     )
-    class(model) <- "proniche"
+    class(model) <- "kernel"
     return(model)
 }
 
-kernel_predict <- function(model, newdata = NULL) {
+predict.kernel <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
@@ -146,7 +156,7 @@ kernel_predict <- function(model, newdata = NULL) {
     return(pred)
 }
 
-kernel_plot <- function(model, cols = 1:2, contours = 10, border = "red",
+plot.kernel <- function(model, cols = 1:2, contours = 10, border = "red",
                         pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
@@ -159,6 +169,10 @@ kernel_plot <- function(model, cols = 1:2, contours = 10, border = "red",
         ch <- chull(pnt)
         polygon(pnt[ch, ], border = border, col = NA, ...)
     }
+}
+
+print.kernel <- function(model) {
+    print(paste(class(model), "model with", model$nq, "variables."))
 }
 
 # Returns Gower's distance
@@ -192,20 +206,19 @@ igower <- function(model, D) {
 }
 
 # Based on Carpenter et al. (1993). Biodiversity Conservation 2, 667-680
-domain_model <- function(x) {
+domain <- function(x) {
     x <- na.exclude(as.matrix(x))
     rng <- unlist(apply(x, 2, function(d) diff(range(d))))
     model <- list(
-        type = "domain",
         model = rng,
         x = x,
         nvars = ncol(x)
     )
-    class(model) <- "proniche"
+    class(model) <- "domain"
     return(model)
 }
 
-domain_predict <- function(model, newdata = NULL) {
+predict.domain <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
@@ -220,7 +233,7 @@ domain_predict <- function(model, newdata = NULL) {
     return(D)
 }
 
-domain_plot <- function(model, cols = 1:2, contours = seq(0.9, 1, 0.01),
+plot.domain <- function(model, cols = 1:2, contours = seq(0.9, 1, 0.01),
                         border = "red", pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         plot(model$x[, cols], col = pnt.col, ...)
@@ -244,6 +257,9 @@ domain_plot <- function(model, cols = 1:2, contours = seq(0.9, 1, 0.01),
     }
 }
 
+print.domain <- function(model) {
+    print(paste(class(model), "model with", model$nq, "variables."))
+}
 
 # mahalanobis distance
 mah_dist <- function(x, u, sigma) {
@@ -262,22 +278,21 @@ ellipse_from_cov <- function(sigma, u, sdev_scale, dims = 1:2, n_points = 100) {
 }
 
 
-mahalanobis_model <- function(x) {
+mahalanobis <- function(x) {
     x <- na.exclude(as.matrix(x))
     u <- colMeans(x)
     sigma <- stats::cov(x) # Need always a few points to estimate covaraince
     model <- list(
-        type = "mahalanobis",
         model = list(u = u, sigma = sigma),
         x = x,
         nvars = ncol(x)
     )
-    class(model) <- "proniche"
+    class(model) <- "mahalanobis"
     return(model)
 }
 
 # Note: scales distances to zero-one range and inverts (near is 1, far is zero)
-mahalanobis_predict <- function(model, newdata = NULL) {
+predict.mahalanobis <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
@@ -293,7 +308,7 @@ mahalanobis_predict <- function(model, newdata = NULL) {
 
 
 # contours are sdevs away from the mean
-mahalanobis_plot <- function(model, cols = 1:2,
+plot.mahalanobis <- function(model, cols = 1:2,
                              contours = c(1, 1.64, 1.96, 2.33),
                              border = "red", pnt.col = "gray", add = FALSE,
                              ...) {
@@ -304,6 +319,10 @@ mahalanobis_plot <- function(model, cols = 1:2,
         pnt <- ellipse_from_cov(model$model$sigma, model$model$u, sdev, cols)
         polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
     }
+}
+
+print.mahalanobis <- function(model) {
+    print(paste(class(model), "model with", model$nq, "variables."))
 }
 
 
@@ -327,7 +346,7 @@ dmnorm <- function(x, mu, sigma) {
     return(dens / den)
 }
 
-mvnormal_model <- function(x) {
+mvnormal <- function(x) {
     data <- na.exclude(as.matrix(x))
     # Stop if not enough data points
     if (nrow(data) < 5) {
@@ -339,17 +358,16 @@ mvnormal_model <- function(x) {
     sig <- stats::cov(x)
 
     model <- list(
-        type = "mvnormal",
         model = list(u = avg, sigma = sig),
         x = x,
         nvars = ncol(x)
     )
-    class(model) <- "proniche"
+    class(model) <- "mvnormal"
     return(model)
 }
 
 
-mvnormal_predict <- function(model, newdata = NULL) {
+predict.mvnormal <- function(model, newdata = NULL) {
     if (is.null(newdata)) {
         data <- as.matrix(model$x)
     } else {
@@ -363,7 +381,7 @@ mvnormal_predict <- function(model, newdata = NULL) {
 }
 
 # contours are sdevs away from the mean
-mvnormal_plot <- function(model, cols = 1:2,
+plot.mvnormal <- function(model, cols = 1:2,
                           contours = c(1, 1.64, 1.96, 2.33),
                           border = "red", pnt.col = "gray", add = FALSE,
                           ...) {
@@ -375,6 +393,11 @@ mvnormal_plot <- function(model, cols = 1:2,
         polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
     }
 }
+
+print.mvnormal <- function(model) {
+    print(paste(class(model), "model with", model$nq, "variables."))
+}
+
 
 # Adds samples to data by the nearest "maxsample" points to
 # each original sample in the environmental space
