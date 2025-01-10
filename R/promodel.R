@@ -1,57 +1,57 @@
-promodel <- function(vals, vars, method = "bioclim", na.rm = TRUE, dup.rm = FALSE, verbosity = 2) {
+promodel <- function(x, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
+                     verbosity = 2, ...) {
+    # version 1.3 (3 Jan 2025)
 
-  # version 1.3 (3 Jan 2025)
+    method <- tolower(method)
+    method <- match.arg(method,
+        choices = c(
+            "bioclim",
+            "domain",
+            "convexhull",
+            "mahalanobis",
+            "kernel",
+            "mvnormal"
+        )
+    )
 
-  method <- tolower(method)
-  method <- match.arg(method, choices = c("bioclim", "domain", "convexhull", "mahalanobis", "kernel", "mvnormal"))
+    x <- as.data.frame(x)
+    x <- dataPrune(x, na.rm = na.rm, dup.rm = dup.rm, verbosity = verbosity)
 
-  vals <- as.data.frame(vals)
+    model <- switch(method,
+        bioclim = bioclim(x, ...),
+        domain = domain(x),
+        convexhull = convexhull(x),
+        mahalanobis = mahalanobis(x),
+        kernel = kernel(x, ...),
+        mvnormal = mvnormal(x)
+    )
+    model <- list(proniche = model)
+    class(model) <- c("proniche", class(model))
+    return(model)
+}
 
-  vals <- dataPrune(vals, na.rm = na.rm, dup.rm = dup.rm, verbosity = verbosity)
-
-  if (inherits(vars, "SpatRaster")) vars <- vars[[names(vals)]]
-  else vars <- vars[ , names(vals), drop = FALSE]
-
-
-  if (method == "bioclim")
-    bioclim(vals, vars)
-
-  else if (method == "convexhull") {
-    if (ncol(vals) < 2) stop("input 'method' requires more than one variable.")
-
-    # otherwise:
-    # Error in doTryCatch(return(expr), name, parentenv, handler) :
-    #   Received error code 1 from qhull. Qhull error:
-    #   QH6050 qhull error: dimension 1 must be > 1
-    #
-    # While executing:  | qhull Tv  Qt
-    # Options selected for Qhull 2020.2.r 2020/08/31:
-    #   run-id 1859778841  Tverify  Qtriangulate  _pre-merge  _zero-centrum
-    # _maxoutside  0
-
-    convexHullModel(vals, vars)
-  }
-
-  else if (method == "domain")
-    domainmodel(vals, vars)
-
-  else if (method == "mahalanobis")
-    mahalanobisModel(vals, vars)
-
-  else if (method == "kernel") {
-    if (ncol(vals) > 6)
-      stop ("Kernel density estimate is only implemented for up to 6 variables\n(see ?ks::kde)")
-    if (ncol(vals) > 4) {
-      message ("Setting binned=FALSE, as required by ks::kde() when >4 variables.\nThis is computationally intensive!")
-      # otherwise:
-      # Error in ks::kde(as.matrix(vals), compute.cont = FALSE, approx.cont = TRUE) : Binned estimation for d>4 not implemented. Set binned=FALSE for exact estimation.
-      kernelModel(vals, vars, binned = FALSE)
+predict.proniche <- function(model, newdata = NULL) {
+    if (inherits(newdata, "SpatRaster")) {
+        data <- as.matrix(newdata[[names(model$proniche$x)]])
+    } else {
+        data <- newdata[, names(model$proniche$x), drop = FALSE]
     }
-    else kernelModel(vals, vars)
-  }
 
-  else if (method == "mvnormal") {
-    if (ncol(vals) < 2) stop("input 'method' requires more than one variable.")
-    mvnormalModel(vals, vars)
-  }
+    p <- predict(model$proniche, newdata = data)
+
+    if (inherits(newdata, "SpatRaster")) {
+        pred <- newdata[[1]]
+        pred[][, 1] <- p
+        names(pred) <- class(model$proniche)
+        return(pred)
+    }
+    return(p)
+}
+
+plot.proniche <- function(model, ...) {
+    plot(model[["proniche"]], ...)
+}
+
+print.proniche <- function(model) {
+    print(model[["proniche"]])
 }
