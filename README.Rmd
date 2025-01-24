@@ -143,7 +143,7 @@ terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")
 - ~~Add documentation and references to original model publications~~
 - ~~Maybe some accessory functions to clean data set? (Remove duplicates, NAs, etc)~~
 - ~~Instead of receiving coordinates as input, perhaps modelling functions should get already the environmental values at presences?~~
-- Function to plot models representation in environmental space?
+- ~~Function to plot models representation in environmental space?~~
 
 - ~~Implement for data frames (not just SpatRasters)~~
 - ~~Add function to reclassify predictions into comparable scale~~
