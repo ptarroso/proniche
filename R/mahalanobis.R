@@ -1,7 +1,7 @@
 #' Mahalanobis model
 #'
 #' This function fits a model based on mahalanobis distance.
-#' Distance values are converted to similarity with (1 - M/max(M))
+#' Distance values are converted p-values using chi² distribution
 #'
 #' @param x A matrix of data of environmental values at observed locations
 #' @param nq Number of quantiles to estimate bioclim envelopes.
@@ -42,7 +42,7 @@ predict.mahalanobis <- function(model, newdata = NULL) {
     for (i in which(!mask)) {
         M[i] <- mah_dist(unlist(data[i, ]), model$model$u, model$model$sigma)
     }
-    p <- 1 - (M / max(M, na.rm = T)) # (AMB edited)
+    p <- 1 - pchisq(M, model$nvars) # (AMB edited)
     return(p)
 }
 
