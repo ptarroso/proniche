@@ -31,17 +31,19 @@ library(geodata)
 ### Import some example data within a region
 
 ``` r
+# import, select and crop a few bioclimatic variables:
 vars <- geodata::worldclim_global(var = "bio", res = 5, path = "outputs")
 names(vars) <- sub("wc2.1_5m_", "", names(vars))
 vars <- vars[[c("bio_1", "bio_6", "bio_12", "bio_14")]]
+vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))
 terra::plot(vars)
 ```
 
 <img src="man/figures/README-usage-1.png" width="100%" />
 
 ``` r
-vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))
 
+# import species occurrence records in this region:
 occs <- geodata::sp_occurrence(genus = "Tuta", 
                                species = "absoluta", 
                                ext = vars)
@@ -51,8 +53,7 @@ occs <- geodata::sp_occurrence(genus = "Tuta",
 #> 335 records downloaded
 occs <- occs[ , c("lon", "lat")]
 
-vals <- terra::extract(vars, occs, ID = FALSE)
-
+# map the occurrence records:
 terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
             legend = FALSE, main = "Presences")
 points(occs, pch = 20, cex = 0.2)
@@ -63,13 +64,15 @@ points(occs, pch = 20, cex = 0.2)
 ### Plot frequency distributions
 
 ``` r
+vals <- terra::extract(vars, occs, ID = FALSE)
+
 par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
 
 <img src="man/figures/README-freqPlot-1.png" width="100%" />
 
-### Fit models
+### Fit true presence-only models
 
 ``` r
 bc_fit <- proniche::promodel(vals, method = "bioclim")
