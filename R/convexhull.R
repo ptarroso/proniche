@@ -6,7 +6,7 @@
 #'
 #' @return An object of class "convexhull"
 #' @export
-convexhull <- function(x) {
+convexhull <- function(x, ...) {
     x <- na.exclude(as.matrix(x))
     original <- x
     nobs <- nrow(x)
@@ -25,7 +25,7 @@ convexhull <- function(x) {
     i <- 1
     id <- 1:nrow(x)
     while (nrow(x) > nvars) {
-        ch <- geometry::convhulln(x)
+        ch <- geometry::convhulln(x, ...)
         # Have to redo the IDs in ch to map to the original matrix
         attr(ch, "pid") <- matrix(id[ch], nrow(ch), ncol(ch))
         rm <- unique(as.vector(ch))
