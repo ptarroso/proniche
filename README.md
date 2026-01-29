@@ -31,11 +31,13 @@ library(geodata)
 ### Import some example data within a region
 
 ``` r
-# import, select and crop a few bioclimatic variables:
+# import and select a few bioclimatic variables:
 vars <- geodata::worldclim_global(var = "bio", res = 5, path = "outputs")
 names(vars) <- sub("wc2.1_5m_", "", names(vars))
 vars <- vars[[c("bio_1", "bio_6", "bio_12", "bio_14")]]
-vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))
+
+# crop to region of interest:
+vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))  # xmin, xmax, ymin, ymax
 terra::plot(vars)
 ```
 
@@ -46,12 +48,19 @@ terra::plot(vars)
 # import species occurrence records in this region:
 occs <- geodata::sp_occurrence(genus = "Tuta", 
                                species = "absoluta", 
-                               ext = vars)
-#> Loading required namespace: jsonlite
-#> 335 records found
-#> 0-300-335
-#> 335 records downloaded
-occs <- occs[ , c("lon", "lat")]
+                               ext = vars, 
+                               args = "occurrenceStatus=Present")
+# note that data cleaning should normally be performed
+# we omit this step here, as it may be complex and is beyond our scope
+
+occs <- subset(occs, select = c("lon", "lat"))
+
+# remove duplicate points:
+nrow(occs)
+#> [1] 335
+vals <- na.omit(occs)
+nrow(occs)
+#> [1] 335
 
 # map the occurrence records:
 terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
