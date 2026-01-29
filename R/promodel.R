@@ -21,7 +21,7 @@ promodel <- function(x, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
     model <- switch(method,
         bioclim = bioclim(x, ...),
         domain = domain(x),
-        convexhull = convexhull(x),
+        convexhull = convexhull(x, ...),
         mahalanobis = mahalanobis(x),
         kernel = kernel(x, ...),
         mvnormal = mvnormal(x)

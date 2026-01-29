@@ -6,16 +6,26 @@
 #'
 #' @return An object of class "convexhull"
 #' @export
-convexhull <- function(x) {
+convexhull <- function(x, ...) {
     x <- na.exclude(as.matrix(x))
     original <- x
+    nobs <- nrow(x)
     nvars <- ncol(x)
-    if (nvars < 2) stop("Convex hull requires more than one variable.")
+    if (nvars < 2) {
+        stop("Convex hull requires at least 2 variables.")
+    }
+    if (nobs < (nvars + 1)) {
+        stop("Insufficient observations: Number of observations must be at least number of variables + 1.")
+    }
+    var_test <- apply(x, 2, var) < .Machine$double.eps**0.5
+    if(any(var_test)) {
+        stop("Constant variables detected. Each variable must have more than one unique value.")
+    }
     env_ch <- list()
     i <- 1
     id <- 1:nrow(x)
     while (nrow(x) > nvars) {
-        ch <- geometry::convhulln(x, options = "QJ") # (AMB edited)
+        ch <- geometry::convhulln(x, ...)
         # Have to redo the IDs in ch to map to the original matrix
         attr(ch, "pid") <- matrix(id[ch], nrow(ch), ncol(ch))
         rm <- unique(as.vector(ch))
