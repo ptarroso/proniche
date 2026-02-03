@@ -129,7 +129,8 @@ terra::plot(mv, type = "continuous", main = "Multivariate Normal")
 
 ### Reclassify predictions into a comparable scale
 
-From Formoso-Freire et al. (2021):
+From [Formoso-Freire et
+al. (2021)](https://doi.org/10.1016/j.biocon.2023.110361):
 
 “*This function rescales the predictions into a ranked suitability value
 for each grid cell, thus informing about the suitability of climatic

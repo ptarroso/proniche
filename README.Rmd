@@ -20,13 +20,12 @@ knitr::opts_chunk$set(
 
 R package for computing niche models using a variety of **truly presence-only methods** (i.e., methods that use only environmental info from the presence sites, with no background or pseudo-absence data):
 
-- Bioclim (rectangular environmental envelope)
-- Convex hull (in environmental space)
-- Domain
-- Mahalanobis distance
-- Kernel density estimate
-- Multivariate normal distribution
-
+-   Bioclim (rectangular environmental envelope)
+-   Convex hull (in environmental space)
+-   Domain
+-   Mahalanobis distance
+-   Kernel density estimate
+-   Multivariate normal distribution
 
 ## User guide
 
@@ -84,8 +83,6 @@ par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
 
-
-
 ### Fit true presence-only models
 
 ```{r fitmodel}
@@ -98,6 +95,7 @@ mv_fit <- proniche::promodel(vals, method = "mvnormal")
 ```
 
 ### Plot models in environmental space
+
 ```{r checkmodel}
 par(mfrow = c(2, 3))
 plot(bc_fit, main = "Bioclim")
@@ -127,10 +125,9 @@ terra::plot(km, type = "continuous", main = "Kernel")
 terra::plot(mv, type = "continuous", main = "Multivariate Normal")
 ```
 
-
 ### Reclassify predictions into a comparable scale
 
-From Formoso-Freire et al. (2021):
+From [Formoso-Freire et al. (2021)](https://doi.org/10.1016/j.biocon.2023.110361):
 
 "*This function rescales the predictions into a ranked suitability value for each grid cell, thus informing about the suitability of climatic conditions in relative terms and hence which locations are more suitable than others. Current implementations of BIOCLIM compute a percentile distribution of the values of each environmental variable at known presence locations. Then, the closer to the 50th percentile (the median), the more suitable each location is according to that variable. However, the more variables are included in the model, the less suitable any location is considered, because it is less likely to be close to the median for all variables, and more likely to be outside the range observed at known presences for at least one variable. Our proposed rescaling of Bioclim predictions removes the dependence of the potential distribution on the number of variables included, and it provides more realistic predictions*".
 
