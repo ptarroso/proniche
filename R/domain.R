@@ -66,7 +66,11 @@ predict.domain <- function(object, newdata = NULL) {
 plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
                         border = "red", pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
-        plot(x$x[, cols], col = pnt.col, ...)
+        # plot(x$x[, cols], col = pnt.col, ...)
+        terra::plot(terra::vect(as.matrix(x$x[, cols])),  # to overlay 'bounds' below
+                    clip = FALSE, mar = par()$mar,
+                    pch = 1,  # to match other plots
+                    col = pnt.col, ...)
     }
     if (length(contours) == 1) {
         contours <- seq(0, 1, length.out = contours + 2)
