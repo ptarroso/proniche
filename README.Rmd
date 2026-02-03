@@ -130,6 +130,10 @@ terra::plot(mv, type = "continuous", main = "Multivariate Normal")
 
 ### Reclassify predictions into a comparable scale
 
+From Formoso-Freire et al. (2021):
+
+"*This function rescales the predictions into a ranked suitability value for each grid cell, thus informing about the suitability of climatic conditions in relative terms and hence which locations are more suitable than others. Current implementations of BIOCLIM compute a percentile distribution of the values of each environmental variable at known presence locations. Then, the closer to the 50th percentile (the median), the more suitable each location is according to that variable. However, the more variables are included in the model, the less suitable any location is considered, because it is less likely to be close to the median for all variables, and more likely to be outside the range observed at known presences for at least one variable. Our proposed rescaling of Bioclim predictions removes the dependence of the potential distribution on the number of variables included, and it provides more realistic predictions*".
+
 ```{r reclass}
 bc_rcl <- proniche::quantReclass(bc[[1]])
 ch_rcl <- proniche::quantReclass(ch[[1]])
