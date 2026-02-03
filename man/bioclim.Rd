@@ -7,7 +7,7 @@
 bioclim(x, nq = 10)
 }
 \arguments{
-\item{x}{A matrix of data of environmental values at observed locations}
+\item{x}{A matrix of environmental values at presence locations}
 
 \item{nq}{Number of quantiles to estimate bioclim envelopes.}
 }
@@ -15,5 +15,5 @@ bioclim(x, nq = 10)
 An object of class "bioclim"
 }
 \description{
-This function fits a bioclim model
+This function fits a bioclim envelope model
 }

@@ -5,7 +5,7 @@
 \title{Plot Method for Domain}
 \usage{
 \method{plot}{domain}(
-  model,
+  x,
   cols = 1:2,
   contours = seq(0.9, 1, 0.01),
   border = "red",
@@ -15,7 +15,7 @@
 )
 }
 \arguments{
-\item{model}{An object of class `domain`.}
+\item{x}{An object of class `domain`.}
 
 \item{cols}{the columns indices of the data (variables) to use to plot. Only 2 values are used.}
 

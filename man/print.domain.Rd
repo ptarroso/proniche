@@ -4,10 +4,10 @@
 \alias{print.domain}
 \title{Print Method for Domain}
 \usage{
-\method{print}{domain}(model)
+\method{print}{domain}(x)
 }
 \arguments{
-\item{model}{An object of class `domain`.}
+\item{x}{An object of class `domain`.}
 }
 \description{
 Print simple information for object of class `domain`.

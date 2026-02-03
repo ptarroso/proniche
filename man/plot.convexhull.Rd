@@ -4,10 +4,10 @@
 \alias{plot.convexhull}
 \title{Plot Method for Convex Hull}
 \usage{
-\method{plot}{convexhull}(model, cols = 1:2, border = "red", pnt.col = "gray", add = FALSE, ...)
+\method{plot}{convexhull}(x, cols = 1:2, border = "red", pnt.col = "gray", add = FALSE, ...)
 }
 \arguments{
-\item{model}{An object of class `convexhull`.}
+\item{x}{An object of class `convexhull`.}
 
 \item{cols}{the columns indices of the data (variables) to use to plot. Only 2 values are used.}
 

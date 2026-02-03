@@ -1,7 +1,7 @@
 #' Compute presence-only model
 #'
-#' Compute truly presence-only model predictions based on environmental
-#' variables at species occurrence sites, using a specified modeling method.
+#' Compute true presence-only models based on environmental variables at
+#' species occurrence sites, using a specified modeling method.
 #'
 #' @param vals data frame with the values of the variables (columns) at the
 #'   presence localities (rows).
@@ -131,32 +131,32 @@ promodel <- function(vals, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
 
 #' Predict method for proniche models
 #'
-#' @param model An object of class `proniche`.
+#' @param object A model object of class `proniche`.
 #' @param newdata A matrix, data frame, or SpatRaster containing the predictor
 #'   variables. If a SpatRaster is supplied, a SpatRaster is returned.
 #'
 #' @return A numeric vector or SpatRaster with predicted suitability values.
 #' @export
 #'
-predict.proniche <- function(model, newdata = NULL) {
+predict.proniche <- function(object, newdata = NULL) {
     if (inherits(newdata, "SpatRaster")) {
-        if (is.null(model$proniche$varnames)) {
+        if (is.null(object$proniche$varnames)) {
             data <- as.matrix(newdata)
         } else {
-            data <- as.matrix(newdata[[model$proniche$varnames]])
+            data <- as.matrix(newdata[[object$proniche$varnames]])
         }
     } else {
-        if (is.null(model$proniche$varnames)) {
+        if (is.null(object$proniche$varnames)) {
             data <- as.matrix(newdata)
         } else {
-            data <- newdata[, model$proniche$varnames, drop = FALSE]
+            data <- newdata[, object$proniche$varnames, drop = FALSE]
         }
     }
-    p <- predict(model$proniche, newdata = data)
+    p <- predict(object$proniche, newdata = data)
     if (inherits(newdata, "SpatRaster")) {
         pred <- newdata[[1]]
         pred[][, 1] <- p
-        names(pred) <- class(model$proniche)
+        names(pred) <- class(object$proniche)
         return(pred)
     }
     return(p)
@@ -165,18 +165,18 @@ predict.proniche <- function(model, newdata = NULL) {
 
 #' Plot method for proniche models
 #'
-#' @param model An object of class `proniche`.
+#' @param x An object of class `proniche`.
 #' @param ... Additional graphical parameters passed to the underlying plot
 #'   method of the fitted model.
 #'
 #' @return A plot of the fitted niche model in environmental space.
 #' @export
 
-plot.proniche <- function(model, ...) {
-    plot(model[["proniche"]], ...)
+plot.proniche <- function(x, ...) {
+    plot(x[["proniche"]], ...)
 }
 
 #' @export
-print.proniche <- function(model) {
-    print(model[["proniche"]])
+print.proniche <- function(x) {
+    print(x[["proniche"]])
 }

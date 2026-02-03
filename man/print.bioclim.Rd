@@ -4,10 +4,10 @@
 \alias{print.bioclim}
 \title{Print Method for Bioclim}
 \usage{
-\method{print}{bioclim}(model)
+\method{print}{bioclim}(x)
 }
 \arguments{
-\item{model}{An object of class `bioclim`.}
+\item{x}{An object of class `bioclim`.}
 }
 \description{
 Print simple information for object of class `bioclim`.

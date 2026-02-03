@@ -4,10 +4,10 @@
 \alias{print.kernel}
 \title{Print Method for Kernel}
 \usage{
-\method{print}{kernel}(model)
+\method{print}{kernel}(x)
 }
 \arguments{
-\item{model}{An object of class `kernel`.}
+\item{x}{An object of class `kernel`.}
 }
 \description{
 Print simple information for object of class `kernel`.

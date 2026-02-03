@@ -4,10 +4,10 @@
 \alias{print.convexhull}
 \title{Print Method for Convex Hull}
 \usage{
-\method{print}{convexhull}(model)
+\method{print}{convexhull}(x)
 }
 \arguments{
-\item{model}{An object of class `convexhull`.}
+\item{x}{An object of class `convexhull`.}
 }
 \description{
 Print simple information for object of class `convexhull`.

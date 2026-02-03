@@ -4,10 +4,10 @@
 \alias{predict.convexhull}
 \title{Predict Method for Convex Hull}
 \usage{
-\method{predict}{convexhull}(model, newdata = NULL)
+\method{predict}{convexhull}(object, newdata = NULL)
 }
 \arguments{
-\item{model}{An object of class `convexhull`.}
+\item{object}{A model object of class `convexhull`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
 }

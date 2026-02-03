@@ -4,12 +4,12 @@
 \alias{predict.domain}
 \title{Predict Method for Domain}
 \usage{
-\method{predict}{domain}(model, newdata = NULL)
+\method{predict}{domain}(object, newdata = NULL)
 }
 \arguments{
-\item{model}{An object of class `domain`.}
+\item{object}{A model object of class `domain`.}
 
-\item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
+\item{newdata}{New data for predictions in a form of matrix or coercible to matrix.  If NULL (default) predictions are given to training data.}
 }
 \value{
 A vector of predictions.

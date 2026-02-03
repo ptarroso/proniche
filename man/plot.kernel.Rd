@@ -5,7 +5,7 @@
 \title{Plot Method for Kernel}
 \usage{
 \method{plot}{kernel}(
-  model,
+  x,
   cols = 1:2,
   contours = 10,
   border = "red",
@@ -15,7 +15,7 @@
 )
 }
 \arguments{
-\item{model}{An object of class `kernel`.}
+\item{x}{A model object of class `kernel`.}
 
 \item{cols}{the columns indices of the data (variables) to use to plot. Only 2 values are used.}
 

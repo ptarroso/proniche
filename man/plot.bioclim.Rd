@@ -4,10 +4,10 @@
 \alias{plot.bioclim}
 \title{Plot Method for Bioclim}
 \usage{
-\method{plot}{bioclim}(model, cols = 1:2, border = "red", pnt.col = "gray", add = FALSE, ...)
+\method{plot}{bioclim}(x, cols = 1:2, border = "red", pnt.col = "gray", add = FALSE, ...)
 }
 \arguments{
-\item{model}{An object of class `bioclim`.}
+\item{x}{An object of class `bioclim`.}
 
 \item{cols}{the columns indices of the data (variables) to use to plot. Only 2 values are used.}
 

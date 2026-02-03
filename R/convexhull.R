@@ -56,22 +56,22 @@ convexhull <- function(x, ...) {
 #'
 #' This function predicts values using a `convexhull` object.
 #'
-#' @param model An object of class `convexhull`.
+#' @param object A model object of class `convexhull`.
 #' @param newdata New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.
 
 #' @return A vector of predictions.
 #' @export
-predict.convexhull <- function(model, newdata = NULL) {
+predict.convexhull <- function(object, newdata = NULL) {
     if (is.null(newdata)) {
-        data <- as.matrix(model$x)
+        data <- as.matrix(object$x)
         mask <- NULL
     } else {
         data <- as.matrix(newdata)
         mask <- is.na(rowSums(data))
     }
     pred <- rep(0, nrow(data))
-    for (i in 1:model$nch) {
-        pred <- pred + geometry::inhulln(model$model[[i]], data)
+    for (i in 1:object$nch) {
+        pred <- pred + geometry::inhulln(object$model[[i]], data)
     }
     pred[mask] <- NA
     return(pred)
@@ -81,7 +81,7 @@ predict.convexhull <- function(model, newdata = NULL) {
 #'
 #' This function plots the `convexhull` model.
 #'
-#' @param model An object of class `convexhull`.
+#' @param x An object of class `convexhull`.
 #' @param cols the columns indices of the data (variables) to use to plot. Only 2 values are used.
 #' @param border The color of the polygon borders deppicting model extent,
 #' @param pnt.col The color of the training data points (if add=FALSE).
@@ -89,17 +89,17 @@ predict.convexhull <- function(model, newdata = NULL) {
 #' @param ... Other plotting parameters to be passed (e.g. lwd, lty,...).
 #'
 #' @export
-plot.convexhull <- function(model, cols = 1:2, border = "red",
+plot.convexhull <- function(x, cols = 1:2, border = "red",
                             pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
-        plot(model$x[, cols], col = pnt.col, ...)
+        plot(x$x[, cols], col = pnt.col, ...)
     }
     # The representation of high dimensional chulls is difficult...
     # The trick used here is to check which points are within each
     # chull and generate a 2D chull of those on the user defined dims
-    pred <- predict(model)
-    for (i in 1:model$nch) {
-        pnt <- model$x[which(pred >= i), cols]
+    pred <- predict(x)
+    for (i in 1:x$nch) {
+        pnt <- x$x[which(pred >= i), cols]
         ch <- chull(pnt)
         polygon(pnt[ch, ], border = border, col = NA, ...)
     }
@@ -109,8 +109,8 @@ plot.convexhull <- function(model, cols = 1:2, border = "red",
 #'
 #' Print simple information for object of class `convexhull`.
 #'
-#' @param model An object of class `convexhull`.
+#' @param x An object of class `convexhull`.
 #' @export
-print.convexhull <- function(model) {
-    print(paste(class(model), "model with", model$nvars, "variables."))
+print.convexhull <- function(x) {
+    print(paste(class(x), "model with", x$nvars, "variables."))
 }

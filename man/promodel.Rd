@@ -42,8 +42,8 @@ An object of class `proniche`, containing the fitted model in the
   chosen `method`.
 }
 \description{
-Compute truly presence-only model predictions based on environmental
-variables at species occurrence sites, using a specified modeling method.
+Compute true presence-only models based on environmental variables at
+species occurrence sites, using a specified modeling method.
 }
 \details{
 Implemented methods include:

@@ -4,10 +4,10 @@
 \alias{predict.mvnormal}
 \title{Predict Method for Multivariate Normal Distribution model}
 \usage{
-\method{predict}{mvnormal}(model, newdata = NULL)
+\method{predict}{mvnormal}(object, newdata = NULL)
 }
 \arguments{
-\item{model}{An object of class `mvnormal`.}
+\item{object}{An object of class `mvnormal`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
 }

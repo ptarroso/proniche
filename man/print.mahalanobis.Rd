@@ -4,10 +4,10 @@
 \alias{print.mahalanobis}
 \title{Print Method for mahalanobis}
 \usage{
-\method{print}{mahalanobis}(model)
+\method{print}{mahalanobis}(x)
 }
 \arguments{
-\item{model}{An object of class `mahalanobis`.}
+\item{x}{An object of class `mahalanobis`.}
 }
 \description{
 Print simple information for object of class `mahalanobis`.

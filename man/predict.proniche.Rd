@@ -4,10 +4,10 @@
 \alias{predict.proniche}
 \title{Predict method for proniche models}
 \usage{
-\method{predict}{proniche}(model, newdata = NULL)
+\method{predict}{proniche}(object, newdata = NULL)
 }
 \arguments{
-\item{model}{An object of class `proniche`.}
+\item{object}{A model object of class `proniche`.}
 
 \item{newdata}{A matrix, data frame, or SpatRaster containing the predictor
 variables. If a SpatRaster is supplied, a SpatRaster is returned.}

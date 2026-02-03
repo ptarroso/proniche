@@ -5,7 +5,7 @@
 \title{Plot Method for mahalanobis}
 \usage{
 \method{plot}{mahalanobis}(
-  model,
+  x,
   cols = 1:2,
   contours = c(1, 1.64, 1.96, 2.33),
   border = "red",
@@ -15,7 +15,7 @@
 )
 }
 \arguments{
-\item{model}{An object of class `mahalanobis`.}
+\item{x}{An object of class `mahalanobis`.}
 
 \item{cols}{the columns indices of the data (variables) to use to plot. Only 2 values are used.}
 

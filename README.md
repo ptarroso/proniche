@@ -85,7 +85,7 @@ proniche::freqPlot(vals, vars)
 
 ``` r
 bc_fit <- proniche::promodel(vals, method = "bioclim")
-ch_fit <- proniche::promodel(vals, method = "convexhull")
+ch_fit <- proniche::promodel(vals, method = "convexhull", options = "QJ")
 dm_fit <- proniche::promodel(vals, method = "domain")
 mm_fit <- proniche::promodel(vals, method = "mahalanobis")
 km_fit <- proniche::promodel(vals, method = "kernel")

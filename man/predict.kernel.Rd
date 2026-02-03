@@ -4,10 +4,10 @@
 \alias{predict.kernel}
 \title{Predict Method for Kernel}
 \usage{
-\method{predict}{kernel}(model, newdata = NULL)
+\method{predict}{kernel}(object, newdata = NULL)
 }
 \arguments{
-\item{model}{An object of class `kernel`.}
+\item{object}{An object of class `kernel`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
 }

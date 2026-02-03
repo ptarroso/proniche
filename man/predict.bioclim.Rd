@@ -4,16 +4,16 @@
 \alias{predict.bioclim}
 \title{Predict Method for Bioclim}
 \usage{
-\method{predict}{bioclim}(model, newdata = NULL)
+\method{predict}{bioclim}(object, newdata = NULL)
 }
 \arguments{
-\item{model}{An object of class `bioclim`.}
+\item{object}{An object of class `bioclim`.}
 
-\item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
+\item{newdata}{New data for predictions, as a matrix or coercible to matrix. If NULL (default), predictions are given on the training data.}
 }
 \value{
 A vector of predictions.
 }
 \description{
-This function predicts values using a `bioclim` object.
+This function predicts values using a `bioclim` model object.
 }

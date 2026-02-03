@@ -4,10 +4,10 @@
 \alias{plot.proniche}
 \title{Plot method for proniche models}
 \usage{
-\method{plot}{proniche}(model, ...)
+\method{plot}{proniche}(x, ...)
 }
 \arguments{
-\item{model}{An object of class `proniche`.}
+\item{x}{An object of class `proniche`.}
 
 \item{...}{Additional graphical parameters passed to the underlying plot
 method of the fitted model.}
