@@ -19,6 +19,8 @@
 
 \item{cols}{the columns indices of the data (variables) to use to plot. Only 2 values are used.}
 
+\item{contours}{Where to plot the extents on Gower's similarity values.}
+
 \item{border}{The color of the polygon borders deppicting model extent,}
 
 \item{pnt.col}{The color of the training data points (if add=FALSE).}
@@ -26,8 +28,6 @@
 \item{add}{Boolean to add to current device or, if FALSE, to generate a new plot.}
 
 \item{...}{Other plotting parameters to be passed (lwd, lty,...).}
-
-\item{contouns}{Where to plot the extents on Gower's similarity values.}
 }
 \description{
 This function plots the `domain` model.

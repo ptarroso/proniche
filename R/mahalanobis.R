@@ -1,17 +1,18 @@
 #' Mahalanobis model
 #'
 #' This function fits a model based on mahalanobis distance.
-#' Distance values are converted p-values using chi² distribution
+#' Distance values are converted to p-values using chi-squared distribution
 #'
 #' @param x A matrix of data of environmental values at observed locations
-#' @param nq Number of quantiles to estimate bioclim envelopes.
 #'
 #' @return An object of class "mahalanobis"
 #' @export
+
 mahalanobis <- function(x) {
     x <- na.exclude(as.matrix(x))
+    if (nrow(x) == 0) stop ("No rows left after NA exclusion.") # (AMB added)
     u <- colMeans(x)
-    sigma <- stats::cov(x) # Need always a few points to estimate covaraince
+    sigma <- stats::cov(x) # Need always a few points to estimate covariance
     model <- list(
         model = list(u = u, sigma = sigma),
         x = x,
@@ -30,6 +31,7 @@ mahalanobis <- function(x) {
 #' @param newdata New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.
 
 #' @return A vector of predictions.
+#' @importFrom stats pchisq
 #' @export
 predict.mahalanobis <- function(model, newdata = NULL) {
     if (is.null(newdata)) {

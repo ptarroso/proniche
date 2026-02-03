@@ -8,13 +8,11 @@ mahalanobis(x)
 }
 \arguments{
 \item{x}{A matrix of data of environmental values at observed locations}
-
-\item{nq}{Number of quantiles to estimate bioclim envelopes.}
 }
 \value{
 An object of class "mahalanobis"
 }
 \description{
 This function fits a model based on mahalanobis distance.
-Distance values are converted to similarity with (1 - M/max(M))
+Distance values are converted to p-values using chi-squared distribution
 }

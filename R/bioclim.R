@@ -6,7 +6,10 @@
 #' @param nq Number of quantiles to estimate bioclim envelopes.
 #'
 #' @return An object of class "bioclim"
+#' @importFrom stats quantile
+#' @importFrom graphics plot rect
 #' @export
+#'
 bioclim <- function(x, nq = 10) {
     qt <- seq(0, 0.5, length.out = nq)
     env_rect <- matrix(NA, nq, ncol(x) * 2 + 1) # (AMB edited)

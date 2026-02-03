@@ -17,7 +17,7 @@ freqPlot(
 \arguments{
 \item{vals}{data frame with the values of the variables (columns) at the presence localities (rows). Column names must match the names of the corresponding variables in 'vars'.}
 
-\item{vars}{optional SpatRaster or data frame with the variables with which to visually compare the frequency of 'vals'.}
+\item{vars}{optional SpatRaster or data frame with the variables with which to visually compare the frequency of 'vals'. Must include the same variable names as `vals`.}
 
 \item{type}{type of plot to produce: "density" or "boxplot". Case is ignored and partial argument matching is used (i.e., you can set e.g. type="Box")}
 
@@ -30,11 +30,17 @@ freqPlot(
 \item{...}{Optional additional arguments that can be passed to plot(), e.g. 'cex.main' or 'cex.axis'}
 }
 \value{
-A plot of the specified type.
+Invisibly returns `NULL`. The function is called for its side effect
+  of producing a plot.
 }
 \description{
 This function plots (in green) the frequency distribution of each variable at the presence localities, and optionally (in grey) also the frequency across a given study region, using either density or box plots.
 }
 \details{
 This function provides a simple way to visualize the frequency distribution of one or more variables, optionally comparing the distribution of \code{vals} with \code{vars}. It supports two types of plots: density plots and boxplots. When \code{vars} is provided, the function overlays the comparison dataset onto the same plot.
+}
+\examples{
+set.seed(123)
+vals <- data.frame(var1 = rnorm(50), var2 = rnorm(50))
+freqPlot(vals, type = "density")
 }

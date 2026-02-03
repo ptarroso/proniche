@@ -1,4 +1,7 @@
 # Returns Gower's distance
+
+#' @importFrom stats na.omit
+
 gower <- function(x, train, rng = apply(train, 2, function(x) diff(range(x)))) {
     p <- ncol(train)
     G <- 0

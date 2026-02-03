@@ -2,9 +2,16 @@
 #'
 #' This function fits a convex hull model
 #'
-#' @param x A matrix of data of environmental values at observed locations
+#' @importFrom geometry convhulln inhulln
+#' @importFrom stats na.exclude var
+#' @importFrom graphics plot polygon
+#' @importFrom grDevices chull
+#'
+#' @param x A matrix of environmental values at observed presence localities
+#' @param ... Optional additional arguments to pass to geometry::convhulln() -- e.g., try adding options="QJ" if you get an error due to insufficient number of unique points
 #'
 #' @return An object of class "convexhull"
+
 #' @export
 convexhull <- function(x, ...) {
     x <- na.exclude(as.matrix(x))
@@ -79,7 +86,7 @@ predict.convexhull <- function(model, newdata = NULL) {
 #' @param border The color of the polygon borders deppicting model extent,
 #' @param pnt.col The color of the training data points (if add=FALSE).
 #' @param add Boolean to add to current device or, if FALSE, to generate a new plot.
-#' @param ... Other plotting parameters to be passed (lwd, lty,...).
+#' @param ... Other plotting parameters to be passed (e.g. lwd, lty,...).
 #'
 #' @export
 plot.convexhull <- function(model, cols = 1:2, border = "red",

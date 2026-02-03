@@ -17,7 +17,7 @@
 
 \item{add}{Boolean to add to current device or, if FALSE, to generate a new plot.}
 
-\item{...}{Other plotting parameters to be passed (lwd, lty,...).}
+\item{...}{Other plotting parameters to be passed (e.g. lwd, lty,...).}
 }
 \description{
 This function plots the `convexhull` model.

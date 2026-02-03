@@ -4,10 +4,12 @@
 \alias{convexhull}
 \title{Convex hull model}
 \usage{
-convexhull(x)
+convexhull(x, ...)
 }
 \arguments{
-\item{x}{A matrix of data of environmental values at observed locations}
+\item{x}{A matrix of environmental values at observed presence localities}
+
+\item{...}{Optional additional arguments to pass to geometry::convhulln() -- e.g., try adding options="QJ" if you get an error due to insufficient number of unique points}
 }
 \value{
 An object of class "convexhull"

@@ -55,7 +55,7 @@ predict.domain <- function(model, newdata = NULL) {
 #'
 #' @param model An object of class `domain`.
 #' @param cols the columns indices of the data (variables) to use to plot. Only 2 values are used.
-#' @param contouns Where to plot the extents on Gower's similarity values.
+#' @param contours Where to plot the extents on Gower's similarity values.
 #' @param border The color of the polygon borders deppicting model extent,
 #' @param pnt.col The color of the training data points (if add=FALSE).
 #' @param add Boolean to add to current device or, if FALSE, to generate a new plot.
