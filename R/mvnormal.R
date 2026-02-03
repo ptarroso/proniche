@@ -84,5 +84,5 @@ plot.mvnormal <- function(x, cols = 1:2,
 #' @param x An object of class `mvnormal`.
 #' @export
 print.mvnormal <- function(x) {
-    print(paste(class(x), "model with", x$proniche$nvars, "variables."))
+    print(paste(class(x), "model with", x$nvars, "variables."))
 }

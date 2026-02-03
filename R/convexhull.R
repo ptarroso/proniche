@@ -112,5 +112,5 @@ plot.convexhull <- function(x, cols = 1:2, border = "red",
 #' @param x An object of class `convexhull`.
 #' @export
 print.convexhull <- function(x) {
-    print(paste(class(x), "model with", x$proniche$nvars, "variables."))
+    print(paste(class(x), "model with", x$nvars, "variables."))
 }

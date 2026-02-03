@@ -94,5 +94,5 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
 #' @param x An object of class `domain`.
 #' @export
 print.domain <- function(x) {
-    print(paste(class(x), "model with", x$proniche$nvars, "variables."))
+    print(paste(class(x), "model with", x$nvars, "variables."))
 }

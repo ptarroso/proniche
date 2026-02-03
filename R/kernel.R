@@ -84,5 +84,5 @@ plot.kernel <- function(x, cols = 1:2, contours = 10, border = "red",
 #' @param x An object of class `kernel`.
 #' @export
 print.kernel <- function(x) {
-    print(paste(class(x), "model with", x$proniche$nvars, "variables."))
+    print(paste(class(x), "model with", x$nvars, "variables."))
 }
