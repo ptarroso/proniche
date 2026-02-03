@@ -82,5 +82,5 @@ plot.mahalanobis <- function(x, cols = 1:2,
 #' @param x An object of class `mahalanobis`.
 #' @export
 print.mahalanobis <- function(x) {
-    print(paste(class(x), "model with", x$nq, "variables."))
+    print(paste(class(x), "model with", x$proniche$nvars, "variables."))
 }

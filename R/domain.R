@@ -73,7 +73,7 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
         contours <- contours[-c(1, length(contours))]
     }
     for (d in contours) {
-        # Using terra to retrive boundaries by aggregation
+        # Using terra to retrieve boundaries by aggregation
         bounds <- terra::vect()
         points <- igower(x, 1 - d)
         for (i in 1:length(points)) {
@@ -94,5 +94,5 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
 #' @param x An object of class `domain`.
 #' @export
 print.domain <- function(x) {
-    print(paste(class(x), "model with", x$nq, "variables."))
+    print(paste(class(x), "model with", x$proniche$nvars, "variables."))
 }
