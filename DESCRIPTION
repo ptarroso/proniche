@@ -29,7 +29,7 @@ Imports: terra,
          ks
 Suggests: 
 Encoding: UTF-8
-Description: Functions to compute truly presence-only ecological niche models (ENMs) and species distribution models (SDM).
+Description: This package provides functions to compute truly presence-only ecological niche models (ENMs) and species distribution models (SDM). Includes small example datasets derived from WorldClim and GBIF for demonstration purposes.
 License: GPL-3
 URL: https://github.com/ptarroso/proniche
 RoxygenNote: 7.3.3
