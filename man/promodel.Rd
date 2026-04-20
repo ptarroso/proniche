@@ -60,27 +60,40 @@ Implemented methods include:
 }
 \examples{
 \dontrun{
+# Get example data:
+
 library(terra)
 
-# Predictor variables
-elevation <- terra::rast(system.file("ex/elev.tif", package = "terra"))
-slope <- terra::terrain(elevation, v = "slope")
-roughness <- terra::terrain(elevation, v = "roughness")
-vars <- c(elevation, slope, roughness)
+occs <- read.csv(system.file("extdata/occs.csv", package="proniche"))
+
+vars <- terra::rast(system.file("extdata/vars.tif", package="proniche"))
+
+
 terra::plot(vars)
 
-# Random presence points
-vars_coords <- terra::crds(vars)
-set.seed(123)
-pres_coords <- vars_coords[sample(1:nrow(vars_coords), 20), ]
+terra::plot(vars[[1]])
+
+terra::points(occs, pch = 20, cex = 0.5)
+
+
 vals <- terra::extract(vars, pres_coords)
+
 head(vals)
 
-# Compute and plot a model
+
+
+# Compute and plot a model:
+
 mod <- promodel(vals, method = "mahalanobis")
-plot(mod)
+
+plot(mod)  # in environmental space
+
+
 pred <- terra::predict(vars, mod)
-terra::plot(pred)
+
+terra::plot(pred)  # in geographic space
+
+terra::points(occs, pch = 20, cex = 0.5)
 }
 
 }
