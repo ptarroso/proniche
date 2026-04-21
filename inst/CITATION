@@ -19,8 +19,8 @@ if (nzchar(system.file(package = "proniche"))) {  # for CRAN checks
   meta <- utils::packageDescription("proniche")
 
   authors <- c(
-    as.person("A. Marcia Barbosa"),
-    as.person("Pedro Tarroso")
+    as.person("Pedro Tarroso"),
+    as.person("A. Marcia Barbosa")
   )
 
   format_author <- function(p) {
