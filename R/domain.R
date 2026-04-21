@@ -62,13 +62,14 @@ predict.domain <- function(object, newdata = NULL) {
 #' @param add Boolean to add to current device or, if FALSE, to generate a new plot.
 #' @param ... Other plotting parameters to be passed (lwd, lty,...).
 #'
+#' @importFrom graphics par
 #' @export
 plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
                         border = "red", pnt.col = "gray", add = FALSE, ...) {
     if (!add) {
         # plot(x$x[, cols], col = pnt.col, ...)
         terra::plot(terra::vect(as.matrix(x$x[, cols])),  # to overlay 'bounds' below
-                    clip = FALSE, mar = par()$mar,
+                    clip = FALSE, mar = graphics::par()$mar,
                     pch = 1,  # to match other plots
                     col = pnt.col, ...)
     }
