@@ -1,8 +1,8 @@
 Package: proniche
 Type: Package
 Title: PResence-Only NICHE modelling
-Version: 0.4
-Date: 2025-01-07
+Version: 0.5
+Date: 2025-04-21
 Authors@R: c(person(given = "Pedro",
                     family = "Tarroso",
                     role = "aut"),
@@ -26,7 +26,10 @@ Authors@R: c(person(given = "Pedro",
 Maintainer: A. Marcia Barbosa <ana.marcia.barbosa@gmail.com>
 Imports: terra,
          geometry,
-         ks
+         graphics,
+         grDevices,
+         ks,
+         stats
 Suggests: 
 Encoding: UTF-8
 Description: This package provides functions to compute truly presence-only ecological niche models (ENMs) and species distribution models (SDM). Includes small example datasets derived from WorldClim and GBIF for demonstration purposes.
