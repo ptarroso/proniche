@@ -1,0 +1,49 @@
+citHeader("To cite proniche in publications, please use:")
+
+bibentry(
+  bibtype = "Article",
+  title = "proniche – an R package for Presence-Only Niche Modelling in R",
+  author = c(
+    as.person("A. Marcia Barbosa"),
+    as.person("Pedro Tarroso")
+  ),
+  journal = "Biodiversity Informatics",
+  year = "2026",
+  textVersion =
+    "Barbosa, A.M. & Tarroso, P. (under review). proniche – an R package for Presence-Only Niche Modelling in R. Biodiversity Informatics."
+)
+
+
+if (nzchar(system.file(package = "proniche"))) {  # for CRAN checks
+
+  meta <- utils::packageDescription("proniche")
+  
+  authors <- c(
+    as.person("A. Marcia Barbosa"),
+    as.person("Pedro Tarroso")
+  )
+
+  format_author <- function(p) {
+    family <- p$family
+    given  <- p$given
+    initials <- paste0(substr(given, 1, 1), ".", collapse = "")
+    paste0(family, ", ", initials)
+  }
+
+  author_strings <- vapply(authors, format_author, character(1))
+  author_text <- paste(author_strings, collapse = ", ")
+
+  bibentry(
+    bibtype = "Manual",
+    title   = meta$Title,
+    author  = authors,
+    year    = substr(meta$Date, 1, 4),
+    note    = paste("R package version", meta$Version),
+    url     = meta$URL,
+    textVersion = paste0(
+      author_text, " (", substr(meta$Date, 1, 4), "). ",
+      meta$Title, ". R package version ", meta$Version,
+      ". URL: ", meta$URL, "."
+    )
+  )
+}
