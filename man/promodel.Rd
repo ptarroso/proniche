@@ -59,42 +59,33 @@ Implemented methods include:
 }
 }
 \examples{
-\dontrun{
 # Get example data:
 
 library(terra)
 
-occs <- read.csv(system.file("extdata/occs.csv", package="proniche"))
-
-vars <- terra::rast(system.file("extdata/vars.tif", package="proniche"))
-
+vars <- terra::rast(system.file("extdata/vars.tif", package = "proniche"))
+occs <- read.csv(system.file("extdata/occs.csv", package = "proniche"))
 
 terra::plot(vars)
-
 terra::plot(vars[[1]])
-
 terra::points(occs, pch = 20, cex = 0.5)
 
-
-vals <- terra::extract(vars, pres_coords)
-
+vals <- terra::extract(vars, occs, ID = FALSE)
+vals <- unique(vals)
 head(vals)
-
 
 
 # Compute and plot a model:
 
 mod <- promodel(vals, method = "mahalanobis")
 
-plot(mod)  # in environmental space
-
+plot(mod)  # in the environmental space defined by the 1st two variables
+plot(mod, cols = c(3, 4))  # in the environmental space of the 3rd and 4th vars
 
 pred <- terra::predict(vars, mod)
 
 terra::plot(pred)  # in geographic space
-
 terra::points(occs, pch = 20, cex = 0.5)
-}
 
 }
 \references{

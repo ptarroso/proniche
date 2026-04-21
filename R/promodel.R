@@ -38,29 +38,33 @@
 #'   chosen `method`.
 #'
 #' @examples
-#' \dontrun{
+#' # Get example data:
+#'
 #' library(terra)
 #'
-#' # Predictor variables
-#' elevation <- terra::rast(system.file("ex/elev.tif", package = "terra"))
-#' slope <- terra::terrain(elevation, v = "slope")
-#' roughness <- terra::terrain(elevation, v = "roughness")
-#' vars <- c(elevation, slope, roughness)
-#' terra::plot(vars)
+#' vars <- terra::rast(system.file("extdata/vars.tif", package = "proniche"))
+#' occs <- read.csv(system.file("extdata/occs.csv", package = "proniche"))
 #'
-#' # Random presence points
-#' vars_coords <- terra::crds(vars)
-#' set.seed(123)
-#' pres_coords <- vars_coords[sample(1:nrow(vars_coords), 20), ]
-#' vals <- terra::extract(vars, pres_coords)
+#' terra::plot(vars)
+#' terra::plot(vars[[1]])
+#' terra::points(occs, pch = 20, cex = 0.5)
+#'
+#' vals <- terra::extract(vars, occs, ID = FALSE)
+#' vals <- unique(vals)
 #' head(vals)
 #'
-#' # Compute and plot a model
+#'
+#' # Compute and plot a model:
+#'
 #' mod <- promodel(vals, method = "mahalanobis")
-#' plot(mod)
+#'
+#' plot(mod)  # in the environmental space defined by the 1st two variables
+#' plot(mod, cols = c(3, 4))  # in the environmental space of the 3rd and 4th vars
+#'
 #' pred <- terra::predict(vars, mod)
-#' terra::plot(pred)
-#' }
+#'
+#' terra::plot(pred)  # in geographic space
+#' terra::points(occs, pch = 20, cex = 0.5)
 #'
 #' @seealso
 #'   \code{\link{quantReclass}};
