@@ -33,7 +33,7 @@ convexhull <- function(x, ...) {
     id <- 1:nrow(x)
     while (nrow(x) > nvars) {
         ch <- try(geometry::convhulln(x, ...))
-        if (inherits(ch, "try-error")) stop('convexhull() error; try adding options="QJ" to the command.')
+        if (inherits(ch, "try-error")) stop('convexhull() error; try removing duplicate input rows,\nor adding options="QJ" to the command.') # (AMB added)
         # Have to redo the IDs in ch to map to the original matrix
         attr(ch, "pid") <- matrix(id[ch], nrow(ch), ncol(ch))
         rm <- unique(as.vector(ch))
