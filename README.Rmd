@@ -44,7 +44,14 @@ library(geodata)
 ### Import some example data within a region
 
 ```{r usage, message=FALSE}
-# import and select a few bioclimatic variables:
+# you can use the example data bundled with the 'proniche' package:
+
+vars <- terra::rast(system.file("extdata/vars.tif", package = "proniche"))
+occs <- read.csv(system.file("extdata/occs.csv", package = "proniche"))
+
+
+# or you can download and select your own data of interest, e.g.:
+
 vars <- geodata::worldclim_global(var = "bio", res = 5, path = "outputs")
 names(vars) <- sub("wc2.1_5m_", "", names(vars))
 vars <- vars[[c("bio_1", "bio_6", "bio_12", "bio_14")]]
@@ -58,15 +65,12 @@ occs <- geodata::sp_occurrence(genus = "Tuta",
                                species = "absoluta", 
                                ext = vars, 
                                args = "occurrenceStatus=Present")
-# note that data cleaning should normally be performed
-# we omit this step here, as it may be complex and is beyond our scope
+
+# note that data cleaning should normally be performed at this point!
+# e.g. with fuzzySim::cleanCoords() or CoordinateCleaner::clean_coordinates()
+# we omit this step here, as it may be complex and it exceeds our scope
 
 occs <- subset(occs, select = c("lon", "lat"))
-
-# remove duplicate points:
-nrow(occs)
-vals <- na.omit(occs)
-nrow(occs)
 
 # map the occurrence records:
 terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
@@ -74,11 +78,21 @@ terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
 points(occs, pch = 20, cex = 0.2)
 ```
 
-### Plot frequency distributions
+### Extract environmental values at the presence points
 
-```{r freqPlot}
+```{r}
 vals <- terra::extract(vars, occs, ID = FALSE)
 
+# remove duplicates:
+nrow(vals)
+vals <- unique(vals)
+nrow(vals)
+```
+
+
+### Plot frequency distributions
+
+```{r freqPlot, fig.width=6, fig.height=4}
 par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
@@ -87,7 +101,7 @@ proniche::freqPlot(vals, vars)
 
 ```{r fitmodel}
 bc_fit <- proniche::promodel(vals, method = "bioclim")
-ch_fit <- proniche::promodel(vals, method = "convexhull", options = "QJ")
+ch_fit <- proniche::promodel(vals, method = "convexhull")
 dm_fit <- proniche::promodel(vals, method = "domain")
 mm_fit <- proniche::promodel(vals, method = "mahalanobis")
 km_fit <- proniche::promodel(vals, method = "kernel")
@@ -96,7 +110,7 @@ mv_fit <- proniche::promodel(vals, method = "mvnormal")
 
 ### Plot models in environmental space
 
-```{r checkmodel}
+```{r checkmodel, fig.width=6, fig.height=4}
 par(mfrow = c(2, 3))
 plot(bc_fit, main = "Bioclim")
 plot(ch_fit, main = "Convex Hull")
@@ -108,21 +122,21 @@ plot(mv_fit, main = "Multivariate Normal")
 
 ### Map model predictions
 
-```{r predictmodel}
-bc <- predict(bc_fit, vars)
-ch <- predict(ch_fit, vars)
-dm <- predict(dm_fit, vars)
-mm <- predict(mm_fit, vars)
-km <- predict(km_fit, vars)
-mv <- predict(mv_fit, vars)
+```{r predictmodel, fig.width=6, fig.height=3}
+bc_pred <- predict(bc_fit, vars)
+ch_pred <- predict(ch_fit, vars)
+dm_pred <- predict(dm_fit, vars)
+mm_pred <- predict(mm_fit, vars)
+km_pred <- predict(km_fit, vars)
+mv_pred <- predict(mv_fit, vars)
 
 par(mfrow = c(2, 3))
-terra::plot(bc, type = "continuous", main = "Bioclim")
-terra::plot(ch, type = "continuous", main = "Convex Hull")
-terra::plot(dm, type = "continuous", main = "Domain")
-terra::plot(mm, type = "continuous", main = "Mahalanobis")
-terra::plot(km, type = "continuous", main = "Kernel")
-terra::plot(mv, type = "continuous", main = "Multivariate Normal")
+terra::plot(bc_pred, type = "continuous", main = "Bioclim")
+terra::plot(ch_pred, type = "continuous", main = "Convex Hull")
+terra::plot(dm_pred, type = "continuous", main = "Domain")
+terra::plot(mm_pred, type = "continuous", main = "Mahalanobis")
+terra::plot(km_pred, type = "continuous", main = "Kernel")
+terra::plot(mv_pred, type = "continuous", main = "Multivariate Normal")
 ```
 
 ### Reclassify predictions into a comparable scale
@@ -131,13 +145,13 @@ From [Formoso-Freire et al. (2021)](https://doi.org/10.1016/j.biocon.2023.110361
 
 "*This function rescales the predictions into a ranked suitability value for each grid cell, thus informing about the suitability of climatic conditions in relative terms and hence which locations are more suitable than others. Current implementations of BIOCLIM compute a percentile distribution of the values of each environmental variable at known presence locations. Then, the closer to the 50th percentile (the median), the more suitable each location is according to that variable. However, the more variables are included in the model, the less suitable any location is considered, because it is less likely to be close to the median for all variables, and more likely to be outside the range observed at known presences for at least one variable. Our proposed rescaling of Bioclim predictions removes the dependence of the potential distribution on the number of variables included, and it provides more realistic predictions*".
 
-```{r reclass}
-bc_rcl <- proniche::quantReclass(bc[[1]])
-ch_rcl <- proniche::quantReclass(ch[[1]])
-dm_rcl <- proniche::quantReclass(dm[[1]])
-mm_rcl <- proniche::quantReclass(mm[[1]])
-km_rcl <- proniche::quantReclass(km[[1]])
-mv_rcl <- proniche::quantReclass(mv[[1]])
+```{r reclass, fig.width=6, fig.height=3}
+bc_rcl <- proniche::quantReclass(bc_pred[[1]])
+ch_rcl <- proniche::quantReclass(ch_pred[[1]])
+dm_rcl <- proniche::quantReclass(dm_pred[[1]])
+mm_rcl <- proniche::quantReclass(mm_pred[[1]])
+km_rcl <- proniche::quantReclass(km_pred[[1]])
+mv_rcl <- proniche::quantReclass(mv_pred[[1]])
 
 par(mfrow = c(2, 3))
 terra::plot(bc_rcl, range = c(0, 1), type = "continuous", main = "Bioclim")
@@ -150,10 +164,12 @@ terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main = "Multivariate N
 
 ### Ensemble predictions
 
-```{r ensemble}
+```{r ensemble, fig.width=6, fig.height=2}
 preds <- c(bc_rcl, ch_rcl, dm_rcl, mm_rcl, km_rcl, mv_rcl)
+
 ens_mean <- terra::app(preds, "mean")
 ens_var <- terra::app(preds, "var")
+
 par(mfrow = c(1, 2))
 terra::plot(ens_mean, range = c(0, 1), main = "Ensemble mean")
 terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")

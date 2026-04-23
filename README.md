@@ -31,7 +31,14 @@ library(geodata)
 ### Import some example data within a region
 
 ``` r
-# import and select a few bioclimatic variables:
+# you can use the example data bundled with the 'proniche' package:
+
+vars <- terra::rast(system.file("extdata/vars.tif", package = "proniche"))
+occs <- read.csv(system.file("extdata/occs.csv", package = "proniche"))
+
+
+# or you can download and select your own data of interest, e.g.:
+
 vars <- geodata::worldclim_global(var = "bio", res = 5, path = "outputs")
 names(vars) <- sub("wc2.1_5m_", "", names(vars))
 vars <- vars[[c("bio_1", "bio_6", "bio_12", "bio_14")]]
@@ -50,17 +57,12 @@ occs <- geodata::sp_occurrence(genus = "Tuta",
                                species = "absoluta", 
                                ext = vars, 
                                args = "occurrenceStatus=Present")
-# note that data cleaning should normally be performed
-# we omit this step here, as it may be complex and is beyond our scope
+
+# note that data cleaning should normally be performed at this point!
+# e.g. with fuzzySim::cleanCoords() or CoordinateCleaner::clean_coordinates()
+# we omit this step here, as it may be complex and it exceeds our scope
 
 occs <- subset(occs, select = c("lon", "lat"))
-
-# remove duplicate points:
-nrow(occs)
-#> [1] 335
-vals <- na.omit(occs)
-nrow(occs)
-#> [1] 335
 
 # map the occurrence records:
 terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
@@ -70,11 +72,22 @@ points(occs, pch = 20, cex = 0.2)
 
 <img src="man/figures/README-usage-2.png" width="100%" />
 
-### Plot frequency distributions
+### Extract environmental values at the presence points
 
 ``` r
 vals <- terra::extract(vars, occs, ID = FALSE)
 
+# remove duplicates:
+nrow(vals)
+#> [1] 371
+vals <- unique(vals)
+nrow(vals)
+#> [1] 78
+```
+
+### Plot frequency distributions
+
+``` r
 par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
@@ -85,7 +98,7 @@ proniche::freqPlot(vals, vars)
 
 ``` r
 bc_fit <- proniche::promodel(vals, method = "bioclim")
-ch_fit <- proniche::promodel(vals, method = "convexhull", options = "QJ")
+ch_fit <- proniche::promodel(vals, method = "convexhull")
 dm_fit <- proniche::promodel(vals, method = "domain")
 mm_fit <- proniche::promodel(vals, method = "mahalanobis")
 km_fit <- proniche::promodel(vals, method = "kernel")
@@ -109,20 +122,20 @@ plot(mv_fit, main = "Multivariate Normal")
 ### Map model predictions
 
 ``` r
-bc <- predict(bc_fit, vars)
-ch <- predict(ch_fit, vars)
-dm <- predict(dm_fit, vars)
-mm <- predict(mm_fit, vars)
-km <- predict(km_fit, vars)
-mv <- predict(mv_fit, vars)
+bc_pred <- predict(bc_fit, vars)
+ch_pred <- predict(ch_fit, vars)
+dm_pred <- predict(dm_fit, vars)
+mm_pred <- predict(mm_fit, vars)
+km_pred <- predict(km_fit, vars)
+mv_pred <- predict(mv_fit, vars)
 
 par(mfrow = c(2, 3))
-terra::plot(bc, type = "continuous", main = "Bioclim")
-terra::plot(ch, type = "continuous", main = "Convex Hull")
-terra::plot(dm, type = "continuous", main = "Domain")
-terra::plot(mm, type = "continuous", main = "Mahalanobis")
-terra::plot(km, type = "continuous", main = "Kernel")
-terra::plot(mv, type = "continuous", main = "Multivariate Normal")
+terra::plot(bc_pred, type = "continuous", main = "Bioclim")
+terra::plot(ch_pred, type = "continuous", main = "Convex Hull")
+terra::plot(dm_pred, type = "continuous", main = "Domain")
+terra::plot(mm_pred, type = "continuous", main = "Mahalanobis")
+terra::plot(km_pred, type = "continuous", main = "Kernel")
+terra::plot(mv_pred, type = "continuous", main = "Multivariate Normal")
 ```
 
 <img src="man/figures/README-predictmodel-1.png" width="100%" />
@@ -148,12 +161,12 @@ distribution on the number of variables included, and it provides more
 realistic predictions*”.
 
 ``` r
-bc_rcl <- proniche::quantReclass(bc[[1]])
-ch_rcl <- proniche::quantReclass(ch[[1]])
-dm_rcl <- proniche::quantReclass(dm[[1]])
-mm_rcl <- proniche::quantReclass(mm[[1]])
-km_rcl <- proniche::quantReclass(km[[1]])
-mv_rcl <- proniche::quantReclass(mv[[1]])
+bc_rcl <- proniche::quantReclass(bc_pred[[1]])
+ch_rcl <- proniche::quantReclass(ch_pred[[1]])
+dm_rcl <- proniche::quantReclass(dm_pred[[1]])
+mm_rcl <- proniche::quantReclass(mm_pred[[1]])
+km_rcl <- proniche::quantReclass(km_pred[[1]])
+mv_rcl <- proniche::quantReclass(mv_pred[[1]])
 
 par(mfrow = c(2, 3))
 terra::plot(bc_rcl, range = c(0, 1), type = "continuous", main = "Bioclim")
@@ -170,8 +183,10 @@ terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main = "Multivariate N
 
 ``` r
 preds <- c(bc_rcl, ch_rcl, dm_rcl, mm_rcl, km_rcl, mv_rcl)
+
 ens_mean <- terra::app(preds, "mean")
 ens_var <- terra::app(preds, "var")
+
 par(mfrow = c(1, 2))
 terra::plot(ens_mean, range = c(0, 1), main = "Ensemble mean")
 terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")
