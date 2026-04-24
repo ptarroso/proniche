@@ -48,7 +48,7 @@ vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))  # xmin, xmax, ymin, ymax
 terra::plot(vars)
 ```
 
-<img src="man/figures/README-usage-1.png" width="100%" />
+<img src="man/figures/README-usage-1.png" alt="" width="100%" />
 
 ``` r
 
@@ -70,7 +70,7 @@ terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
 points(occs, pch = 20, cex = 0.2)
 ```
 
-<img src="man/figures/README-usage-2.png" width="100%" />
+<img src="man/figures/README-usage-2.png" alt="" width="100%" />
 
 ### Extract environmental values at the presence points
 
@@ -83,6 +83,15 @@ nrow(vals)
 vals <- unique(vals)
 nrow(vals)
 #> [1] 78
+
+head(vals)
+#>       bio_1    bio_6 bio_12 bio_14
+#> 1  14.71175 1.984000    386      4
+#> 3  16.73919 5.720833    570     14
+#> 7  17.62214 5.912360    268      1
+#> 12 17.96979 6.000000    210      1
+#> 15 17.76883 6.351948    294      1
+#> 16 17.30842 5.473000    300      2
 ```
 
 ### Plot frequency distributions
@@ -92,7 +101,7 @@ par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
 
-<img src="man/figures/README-freqPlot-1.png" width="100%" />
+<img src="man/figures/README-freqPlot-1.png" alt="" width="100%" />
 
 ### Fit true presence-only models
 
@@ -107,8 +116,14 @@ mv_fit <- proniche::promodel(vals, method = "mvnormal")
 
 ### Plot models in environmental space
 
+The plots show the bidimensional environmental space defined by two
+variables at a time. By default, the first two variables in the model
+are used, but the `cols` argument can define a different two-variable
+combination:
+
 ``` r
 par(mfrow = c(2, 3))
+
 plot(bc_fit, main = "Bioclim")
 plot(ch_fit, main = "Convex Hull")
 plot(dm_fit, main = "Domain")
@@ -117,7 +132,19 @@ plot(km_fit, main = "Kernel")
 plot(mv_fit, main = "Multivariate Normal")
 ```
 
-<img src="man/figures/README-checkmodel-1.png" width="100%" />
+<img src="man/figures/README-checkmodel-1.png" alt="" width="100%" />
+
+``` r
+
+plot(bc_fit, cols = c(3, 4), main = "Bioclim")
+plot(ch_fit, cols = c(3, 4), main = "Convex Hull")
+plot(dm_fit, cols = c(3, 4), main = "Domain")
+plot(mm_fit, cols = c(3, 4), main = "Mahalanobis")
+plot(km_fit, cols = c(3, 4), main = "Kernel")
+plot(mv_fit, cols = c(3, 4), main = "Multivariate Normal")
+```
+
+<img src="man/figures/README-checkmodel-2.png" alt="" width="100%" />
 
 ### Map model predictions
 
@@ -138,7 +165,7 @@ terra::plot(km_pred, type = "continuous", main = "Kernel")
 terra::plot(mv_pred, type = "continuous", main = "Multivariate Normal")
 ```
 
-<img src="man/figures/README-predictmodel-1.png" width="100%" />
+<img src="man/figures/README-predictmodel-1.png" alt="" width="100%" />
 
 ### Reclassify predictions into a comparable scale
 
@@ -177,9 +204,13 @@ terra::plot(km_rcl, range = c(0, 1), type = "continuous", main = "Kernel")
 terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main = "Multivariate Normal")
 ```
 
-<img src="man/figures/README-reclass-1.png" width="100%" />
+<img src="man/figures/README-reclass-1.png" alt="" width="100%" />
 
 ### Ensemble predictions
+
+There are several ways to ensemble model predictions. The example below
+simply uses the local mean prediction across models, showing also the
+variance for an assessment of uncertainty:
 
 ``` r
 preds <- c(bc_rcl, ch_rcl, dm_rcl, mm_rcl, km_rcl, mv_rcl)
@@ -192,4 +223,58 @@ terra::plot(ens_mean, range = c(0, 1), main = "Ensemble mean")
 terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")
 ```
 
-<img src="man/figures/README-ensemble-1.png" width="100%" />
+<img src="man/figures/README-ensemble-1.png" alt="" width="100%" />
+
+## Evaluate predictions
+
+The following example code lines compute several different evaluation
+metrics for the ensemble mean model (this section requires loading a few
+more packages):
+
+``` r
+library(modEvA)
+library(pROC)
+library(kuenm)
+library(raster)
+
+par(mfrow = c(2, 2))
+
+# evaluation functions in the modEvA package accept spatial data directly:
+
+modEvA::threshMeasures(obs = occs, pred = ens_mean, thresh = "maxTSS", 
+                       measures = c("CCR", "Sensitivity", "Specificity", 
+                       "kappa", "TSS"), rm.dup = TRUE, standardize = FALSE,
+                       main = "Threshold-based metrics")
+
+modEvA::Boyce(obs = occs, pred = ens_mean, rm.dup.points = TRUE,
+              main = "Continuous Boyce Index")
+
+modEvA::AUC(obs = occs, pred = ens_mean, rm.dup = TRUE, main = "ROC curve")
+
+
+# partial AUC in the pROC package requires instead a presence/absence table:
+
+dat <- modEvA::inputMunch(obs = occs, pred = ens_mean, rm.dup = TRUE)
+
+str(dat)
+
+proc <- pROC::roc(response = dat$obs, predictor = dat$pred, 
+                  partial.auc = c(0, 0.2), partial.auc.correct = TRUE)
+
+pROC::plot.roc(proc, print.auc = TRUE, auc.polygon = TRUE, 
+               max.auc.polygon = TRUE)
+```
+
+<img src="man/figures/README-modev-1.png" alt="" width="100%" />
+
+``` r
+# we can also compute the partial ROC ratio under a maximum potential error:
+
+procratio <- kuenm::kuenm_proc(occ.test = occs, 
+                               model = raster::raster(ens_mean), 
+                               threshold = 5)
+
+procratio$pROC_summary
+#> Mean_AUC_ratio_at_5%            pval_pROC 
+#>             1.423419             0.000000
+```
