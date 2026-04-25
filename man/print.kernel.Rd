@@ -4,10 +4,12 @@
 \alias{print.kernel}
 \title{Print Method for Kernel}
 \usage{
-\method{print}{kernel}(x)
+\method{print}{kernel}(x, ...)
 }
 \arguments{
 \item{x}{An object of class `kernel`.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \description{
 Print simple information for object of class `kernel`.

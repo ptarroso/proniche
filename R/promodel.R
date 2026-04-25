@@ -138,11 +138,11 @@ promodel <- function(vals, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
 #' @param object A model object of class `proniche`.
 #' @param newdata A matrix, data frame, or SpatRaster containing the predictor
 #'   variables. If a SpatRaster is supplied, a SpatRaster is returned.
-#'
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A numeric vector or SpatRaster with predicted suitability values.
 #' @export
 #'
-predict.proniche <- function(object, newdata = NULL) {
+predict.proniche <- function(object, newdata = NULL, ...) {
     if (inherits(newdata, "SpatRaster")) {
         if (is.null(object$proniche$varnames)) {
             data <- as.matrix(newdata)
@@ -181,6 +181,6 @@ plot.proniche <- function(x, ...) {
 }
 
 #' @export
-print.proniche <- function(x) {
+print.proniche <- function(x, ...) {
     print(x[["proniche"]])
 }

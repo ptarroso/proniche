@@ -4,10 +4,12 @@
 \alias{print.domain}
 \title{Print Method for Domain}
 \usage{
-\method{print}{domain}(x)
+\method{print}{domain}(x, ...)
 }
 \arguments{
 \item{x}{An object of class `domain`.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \description{
 Print simple information for object of class `domain`.

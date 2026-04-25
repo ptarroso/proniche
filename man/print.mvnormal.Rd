@@ -4,10 +4,12 @@
 \alias{print.mvnormal}
 \title{Print Method for Multivariate Normal Distribution model}
 \usage{
-\method{print}{mvnormal}(x)
+\method{print}{mvnormal}(x, ...)
 }
 \arguments{
 \item{x}{An object of class `mvnormal`.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \description{
 Print simple information for object of class `mvnormal`.

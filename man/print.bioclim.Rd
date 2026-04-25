@@ -4,10 +4,12 @@
 \alias{print.bioclim}
 \title{Print Method for Bioclim}
 \usage{
-\method{print}{bioclim}(x)
+\method{print}{bioclim}(x, ...)
 }
 \arguments{
 \item{x}{An object of class `bioclim`.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \description{
 Print simple information for object of class `bioclim`.

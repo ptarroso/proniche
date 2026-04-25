@@ -4,10 +4,12 @@
 \alias{print.convexhull}
 \title{Print Method for Convex Hull}
 \usage{
-\method{print}{convexhull}(x)
+\method{print}{convexhull}(x, ...)
 }
 \arguments{
 \item{x}{An object of class `convexhull`.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \description{
 Print simple information for object of class `convexhull`.

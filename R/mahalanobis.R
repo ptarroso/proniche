@@ -29,11 +29,11 @@ mahalanobis <- function(x) {
 #'
 #' @param object An object of class `mahalanobis`.
 #' @param newdata New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.
-
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @importFrom stats pchisq
 #' @export
-predict.mahalanobis <- function(object, newdata = NULL) {
+predict.mahalanobis <- function(object, newdata = NULL, ...) {
     if (is.null(newdata)) {
         data <- as.matrix(object$x)
     } else {
@@ -80,7 +80,8 @@ plot.mahalanobis <- function(x, cols = 1:2,
 #' Print simple information for object of class `mahalanobis`.
 #'
 #' @param x An object of class `mahalanobis`.
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
-print.mahalanobis <- function(x) {
+print.mahalanobis <- function(x, ...) {
     print(paste(class(x), "model with", x$nvars, "variables."))
 }

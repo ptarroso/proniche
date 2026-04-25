@@ -42,10 +42,10 @@ bioclim <- function(x, nq = 10) {
 #'
 #' @param object An object of class `bioclim`.
 #' @param newdata New data for predictions, as a matrix or coercible to matrix. If NULL (default), predictions are given on the training data.
-
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @export
-predict.bioclim <- function(object, newdata = NULL) {
+predict.bioclim <- function(object, newdata = NULL, ...) {
     if (is.null(newdata)) {
         data <- object$x
     } else {
@@ -99,7 +99,8 @@ plot.bioclim <- function(x, cols = 1:2, border = "red",
 #' Print simple information for object of class `bioclim`.
 #'
 #' @param x An object of class `bioclim`.
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
-print.bioclim <- function(x) {
+print.bioclim <- function(x, ...) {
     print(paste(class(x), "model with", x$nvars, "variables."))
 }

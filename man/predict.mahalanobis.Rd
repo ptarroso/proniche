@@ -4,12 +4,14 @@
 \alias{predict.mahalanobis}
 \title{Predict Method for Mahalanobis}
 \usage{
-\method{predict}{mahalanobis}(object, newdata = NULL)
+\method{predict}{mahalanobis}(object, newdata = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class `mahalanobis`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \value{
 A vector of predictions.

@@ -29,10 +29,10 @@ domain <- function(x) {
 #'
 #' @param object A model object of class `domain`.
 #' @param newdata New data for predictions in a form of matrix or coercible to matrix.  If NULL (default) predictions are given to training data.
-
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @export
-predict.domain <- function(object, newdata = NULL) {
+predict.domain <- function(object, newdata = NULL, ...) {
     if (is.null(newdata)) {
         data <- as.matrix(object$x)
     } else {
@@ -97,7 +97,8 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
 #' Print simple information for object of class `domain`.
 #'
 #' @param x An object of class `domain`.
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
-print.domain <- function(x) {
+print.domain <- function(x, ...) {
     print(paste(class(x), "model with", x$nvars, "variables."))
 }

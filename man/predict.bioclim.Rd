@@ -4,12 +4,14 @@
 \alias{predict.bioclim}
 \title{Predict Method for Bioclim}
 \usage{
-\method{predict}{bioclim}(object, newdata = NULL)
+\method{predict}{bioclim}(object, newdata = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class `bioclim`.}
 
 \item{newdata}{New data for predictions, as a matrix or coercible to matrix. If NULL (default), predictions are given on the training data.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \value{
 A vector of predictions.

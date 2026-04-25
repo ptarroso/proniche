@@ -4,10 +4,12 @@
 \alias{print.mahalanobis}
 \title{Print Method for mahalanobis}
 \usage{
-\method{print}{mahalanobis}(x)
+\method{print}{mahalanobis}(x, ...)
 }
 \arguments{
 \item{x}{An object of class `mahalanobis`.}
+
+\item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }
 \description{
 Print simple information for object of class `mahalanobis`.

@@ -34,10 +34,10 @@ kernel <- function(x, ...) {
 #'
 #' @param object An object of class `kernel`.
 #' @param newdata New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.
-
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @export
-predict.kernel <- function(object, newdata = NULL) {
+predict.kernel <- function(object, newdata = NULL, ...) {
     if (is.null(newdata)) {
         data <- as.matrix(object$x)
     } else {
@@ -82,7 +82,8 @@ plot.kernel <- function(x, cols = 1:2, contours = 10, border = "red",
 #' Print simple information for object of class `kernel`.
 #'
 #' @param x An object of class `kernel`.
+#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
-print.kernel <- function(x) {
+print.kernel <- function(x, ...) {
     print(paste(class(x), "model with", x$nvars, "variables."))
 }
