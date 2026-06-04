@@ -194,7 +194,6 @@ truncate.proniche <- function(x, p_obs = 1, test_data = NULL) {
   if ((p_obs < 0) || (p_obs > 1)) {
     stop("Proportion of observations argumenr 'p_obs' must be between 0 and 1.")
   }
-  test_data <- as.vector(test_data)
   values <- predict(x, newdata = test_data, type = "raw")
   values <- sort(values[!is.na(values)], decreasing = TRUE)
   n <- length(values)
