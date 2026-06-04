@@ -43,10 +43,11 @@ bioclim <- function(x, nq = 10) {
 #'
 #' @param object An object of class `bioclim`.
 #' @param newdata New data for predictions, as a matrix or coercible to matrix. If NULL (default), predictions are given on the training data.
+#' @param type Type of response: either "raw" (default) for original values of model or "truncated" for nich truncation if defined.
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @export
-predict.bioclim <- function(object, newdata = NULL, ...) {
+predict.bioclim <- function(object, newdata = NULL, type = "raw", ...) {
   if (is.null(newdata)) {
     data <- object$x
   } else {
@@ -63,6 +64,14 @@ predict.bioclim <- function(object, newdata = NULL, ...) {
     }
     pred <- pred + (tmp == nvars)
   }
+
+  if (type == "truncated") {
+    val <- object$truncate
+    print(object)
+    if (is.null(val)) stop("No truncation value.")
+    pred <- pred >= val
+  }
+
   return(pred)
 }
 
@@ -103,5 +112,11 @@ plot.bioclim <- function(x, cols = 1:2, border = "red",
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.bioclim <- function(x, ...) {
-  print(paste(class(x), "model with", x$nvars, "variables."))
+  msg <- paste0(class(x), " model with ", x$nvars, " variables.\n")
+  if (is.null(x$truncate)) {
+    msg <- paste0(msg, "No truncation defined.\n")
+  } else {
+    msg <- paste0(msg, "Truncation at value of ", x$truncate, "\n")
+  }
+  cat(msg)
 }
