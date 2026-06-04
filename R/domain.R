@@ -50,7 +50,7 @@ predict.domain <- function(object, newdata = NULL, type = "raw", ...) {
   }
 
   if (type == "truncated") {
-    val <- object$truncate$p_obs
+    val <- object$truncate$value
     if (is.null(val)) stop("No truncation value.")
     D <- D >= val
   }
@@ -114,7 +114,7 @@ print.domain <- function(x, ...) {
   if (is.null(x$truncate)) {
     msg <- paste0(msg, "No truncation defined.\n")
   } else {
-    msg <- paste0(msg, "Truncation at similarity value of ", x$truncate$p_obs, "\n")
+    msg <- paste0(msg, "Truncation at similarity value of ", x$truncate$value, "\n")
   }
   cat(msg)
 }
