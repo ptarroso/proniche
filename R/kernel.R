@@ -10,22 +10,23 @@
 #' @return An object of class "kernel"
 #' @export
 kernel <- function(x, ...) {
-    x <- na.exclude(as.matrix(x))
-    if (ncol(x) > 6) {
-        warning(paste0(
-            "Kernel density estimate is only implemented for up to ",
-            "6 variables\n(see ?ks::kde)"
-        ))
-    }
-    k <- ks::kde(x, compute.cont = FALSE, approx.cont = TRUE, ...)
-    model <- list(
-        model = k,
-        x = x,
-        nvars = ncol(x),
-        varnames = colnames(x)
-    )
-    class(model) <- "kernel"
-    return(model)
+  x <- na.exclude(as.matrix(x))
+  if (ncol(x) > 6) {
+    warning(paste0(
+      "Kernel density estimate is only implemented for up to ",
+      "6 variables\n(see ?ks::kde)"
+    ))
+  }
+  k <- ks::kde(x, compute.cont = FALSE, approx.cont = TRUE, ...)
+  model <- list(
+    model = k,
+    x = x,
+    truncate = NULL,
+    nvars = ncol(x),
+    varnames = colnames(x)
+  )
+  class(model) <- "kernel"
+  return(model)
 }
 
 #' Predict Method for Kernel
@@ -38,15 +39,15 @@ kernel <- function(x, ...) {
 #' @return A vector of predictions.
 #' @export
 predict.kernel <- function(object, newdata = NULL, ...) {
-    if (is.null(newdata)) {
-        data <- as.matrix(object$x)
-    } else {
-        data <- as.matrix(newdata)
-    }
-    mask <- is.na(rowSums(data))
-    pred <- rep(NA, nrow(data))
-    pred[!mask] <- predict(object$model, x = data[!mask, ])
-    return(pred)
+  if (is.null(newdata)) {
+    data <- as.matrix(object$x)
+  } else {
+    data <- as.matrix(newdata)
+  }
+  mask <- is.na(rowSums(data))
+  pred <- rep(NA, nrow(data))
+  pred[!mask] <- predict(object$model, x = data[!mask, ])
+  return(pred)
 }
 
 #' Plot Method for Kernel
@@ -64,17 +65,17 @@ predict.kernel <- function(object, newdata = NULL, ...) {
 #' @export
 plot.kernel <- function(x, cols = 1:2, contours = 10, border = "red",
                         pnt.col = "gray", add = FALSE, ...) {
-    if (!add) {
-        plot(x$x[, cols], col = pnt.col, ...)
-    }
-    # To plot multidimensional data, it cuts predictions to provide contours
-    pred <- predict(x)
-    p <- seq(min(pred), max(pred), length.out = contours + 1)
-    for (i in 1:contours) {
-        pnt <- x$x[which(pred >= p[i]), cols]
-        ch <- chull(pnt)
-        polygon(pnt[ch, ], border = border, col = NA, ...)
-    }
+  if (!add) {
+    plot(x$x[, cols], col = pnt.col, ...)
+  }
+  # To plot multidimensional data, it cuts predictions to provide contours
+  pred <- predict(x)
+  p <- seq(min(pred), max(pred), length.out = contours + 1)
+  for (i in 1:contours) {
+    pnt <- x$x[which(pred >= p[i]), cols]
+    ch <- chull(pnt)
+    polygon(pnt[ch, ], border = border, col = NA, ...)
+  }
 }
 
 #' Print Method for Kernel
@@ -85,5 +86,5 @@ plot.kernel <- function(x, cols = 1:2, contours = 10, border = "red",
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.kernel <- function(x, ...) {
-    print(paste(class(x), "model with", x$nvars, "variables."))
+  print(paste(class(x), "model with", x$nvars, "variables."))
 }
