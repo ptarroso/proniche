@@ -58,12 +58,12 @@
 #'
 #' mod <- promodel(vals, method = "mahalanobis")
 #'
-#' plot(mod)  # in the environmental space defined by the 1st two variables
-#' plot(mod, cols = c(3, 4))  # in the environmental space of the 3rd and 4th vars
+#' plot(mod) # in the environmental space defined by the 1st two variables
+#' plot(mod, cols = c(3, 4)) # in the environmental space of the 3rd and 4th vars
 #'
 #' pred <- terra::predict(vars, mod)
 #'
-#' terra::plot(pred)  # in geographic space
+#' terra::plot(pred) # in geographic space
 #' terra::points(occs, pch = 20, cex = 0.5)
 #'
 #' @seealso
@@ -102,34 +102,34 @@
 #' @export
 promodel <- function(vals, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
                      verbosity = 2, ...) {
-    # version 1.3 (3 Jan 2025)
+  # version 1.3 (3 Jan 2025)
 
-    method <- tolower(method)
-    method <- match.arg(method,
-        choices = c(
-            "bioclim",
-            "domain",
-            "convexhull",
-            "mahalanobis",
-            "kernel",
-            "mvnormal"
-        )
+  method <- tolower(method)
+  method <- match.arg(method,
+    choices = c(
+      "bioclim",
+      "domain",
+      "convexhull",
+      "mahalanobis",
+      "kernel",
+      "mvnormal"
     )
+  )
 
-    vals <- as.data.frame(vals)
-    vals <- dataPrune(vals, na.rm = na.rm, dup.rm = dup.rm, verbosity = verbosity)
+  vals <- as.data.frame(vals)
+  vals <- dataPrune(vals, na.rm = na.rm, dup.rm = dup.rm, verbosity = verbosity)
 
-    model <- switch(method,
-        bioclim = bioclim(vals, ...),
-        domain = domain(vals),
-        convexhull = convexhull(vals, ...),
-        mahalanobis = mahalanobis(vals),
-        kernel = kernel(vals, ...),
-        mvnormal = mvnormal(vals)
-    )
-    model <- list(proniche = model)
-    class(model) <- c("proniche", class(model))
-    return(model)
+  model <- switch(method,
+    bioclim = bioclim(vals, ...),
+    domain = domain(vals),
+    convexhull = convexhull(vals, ...),
+    mahalanobis = mahalanobis(vals),
+    kernel = kernel(vals, ...),
+    mvnormal = mvnormal(vals)
+  )
+  model <- list(proniche = model)
+  class(model) <- c("proniche", class(model))
+  return(model)
 }
 
 
@@ -138,32 +138,32 @@ promodel <- function(vals, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
 #' @param object A model object of class `proniche`.
 #' @param newdata A matrix, data frame, or SpatRaster containing the predictor
 #'   variables. If a SpatRaster is supplied, a SpatRaster is returned.
-#' @param ... Additional arguments (currently ignored, included for consistency with the generic).
+#' @param ... Additional arguments to model prediction.
 #' @return A numeric vector or SpatRaster with predicted suitability values.
 #' @export
 #'
 predict.proniche <- function(object, newdata = NULL, ...) {
-    if (inherits(newdata, "SpatRaster")) {
-        if (is.null(object$proniche$varnames)) {
-            data <- as.matrix(newdata)
-        } else {
-            data <- as.matrix(newdata[[object$proniche$varnames]])
-        }
+  if (inherits(newdata, "SpatRaster")) {
+    if (is.null(object$proniche$varnames)) {
+      data <- as.matrix(newdata)
     } else {
-        if (is.null(object$proniche$varnames)) {
-            data <- as.matrix(newdata)
-        } else {
-            data <- newdata[, object$proniche$varnames, drop = FALSE]
-        }
+      data <- as.matrix(newdata[[object$proniche$varnames]])
     }
-    p <- predict(object$proniche, newdata = data)
-    if (inherits(newdata, "SpatRaster")) {
-        pred <- newdata[[1]]
-        pred[][, 1] <- p
-        names(pred) <- class(object$proniche)
-        return(pred)
+  } else {
+    if (is.null(object$proniche$varnames)) {
+      data <- as.matrix(newdata)
+    } else {
+      data <- newdata[, object$proniche$varnames, drop = FALSE]
     }
-    return(p)
+  }
+  p <- predict(object$proniche, newdata = data, ...)
+  if (inherits(newdata, "SpatRaster")) {
+    pred <- newdata[[1]]
+    pred[][, 1] <- p
+    names(pred) <- class(object$proniche)
+    return(pred)
+  }
+  return(p)
 }
 
 
@@ -177,10 +177,24 @@ predict.proniche <- function(object, newdata = NULL, ...) {
 #' @export
 
 plot.proniche <- function(x, ...) {
-    plot(x[["proniche"]], ...)
+  plot(x[["proniche"]], ...)
 }
 
 #' @export
 print.proniche <- function(x, ...) {
-    print(x[["proniche"]])
+  print(x[["proniche"]])
+}
+
+#' @export
+truncate.proniche <- function(x, p_obs = 1, test_data = NULL) {
+  if ((p_obs < 0) || (p_obs > 1)) {
+    stop("Proportion of observations argumenr 'p_obs' must be between 0 and 1.")
+  }
+  test_data <- as.vector(test_data)
+  values <- sort(predict(x, newdata = test_data))
+  values <- values[!is.na(values)]
+  n <- length(values)
+  i <- floor(n * p_obs)
+  x$model$truncate <- values[i]
+  x
 }
