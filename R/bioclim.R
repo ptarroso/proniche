@@ -29,6 +29,7 @@ bioclim <- function(x, nq = 10) {
     model = env_rect,
     x = x,
     nq = nq,
+    truncate = NULL,
     nvars = ncol(x),
     varnames = colnames(x)
   )
