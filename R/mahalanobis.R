@@ -9,18 +9,19 @@
 #' @export
 
 mahalanobis <- function(x) {
-    x <- na.exclude(as.matrix(x))
-    if (nrow(x) == 0) stop ("No rows left after NA exclusion.") # (AMB added)
-    u <- colMeans(x)
-    sigma <- stats::cov(x) # Need always a few points to estimate covariance
-    model <- list(
-        model = list(u = u, sigma = sigma),
-        x = x,
-        nvars = ncol(x),
-        varnames = colnames(x)
-    )
-    class(model) <- "mahalanobis"
-    return(model)
+  x <- na.exclude(as.matrix(x))
+  if (nrow(x) == 0) stop("No rows left after NA exclusion.") # (AMB added)
+  u <- colMeans(x)
+  sigma <- stats::cov(x) # Need always a few points to estimate covariance
+  model <- list(
+    model = list(u = u, sigma = sigma),
+    x = x,
+    truncate = NULL,
+    nvars = ncol(x),
+    varnames = colnames(x)
+  )
+  class(model) <- "mahalanobis"
+  return(model)
 }
 
 #' Predict Method for Mahalanobis
@@ -34,18 +35,18 @@ mahalanobis <- function(x) {
 #' @importFrom stats pchisq
 #' @export
 predict.mahalanobis <- function(object, newdata = NULL, ...) {
-    if (is.null(newdata)) {
-        data <- as.matrix(object$x)
-    } else {
-        data <- as.matrix(newdata)
-    }
-    mask <- is.na(rowSums(data))
-    M <- rep(NA, nrow(data))
-    for (i in which(!mask)) {
-        M[i] <- mah_dist(unlist(data[i, ]), object$model$u, object$model$sigma)
-    }
-    p <- 1 - pchisq(M, object$nvars) # (AMB edited)
-    return(p)
+  if (is.null(newdata)) {
+    data <- as.matrix(object$x)
+  } else {
+    data <- as.matrix(newdata)
+  }
+  mask <- is.na(rowSums(data))
+  M <- rep(NA, nrow(data))
+  for (i in which(!mask)) {
+    M[i] <- mah_dist(unlist(data[i, ]), object$model$u, object$model$sigma)
+  }
+  p <- 1 - pchisq(M, object$nvars) # (AMB edited)
+  return(p)
 }
 
 
@@ -66,13 +67,13 @@ plot.mahalanobis <- function(x, cols = 1:2,
                              contours = c(1, 1.64, 1.96, 2.33),
                              border = "red", pnt.col = "gray", add = FALSE,
                              ...) {
-    if (!add) {
-        plot(x$x[, cols], col = pnt.col, ...)
-    }
-    for (sdev in contours) {
-        pnt <- ellipse_from_cov(x$model$sigma, x$model$u, sdev, cols)
-        polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
-    }
+  if (!add) {
+    plot(x$x[, cols], col = pnt.col, ...)
+  }
+  for (sdev in contours) {
+    pnt <- ellipse_from_cov(x$model$sigma, x$model$u, sdev, cols)
+    polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
+  }
 }
 
 #' Print Method for mahalanobis
@@ -83,5 +84,5 @@ plot.mahalanobis <- function(x, cols = 1:2,
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.mahalanobis <- function(x, ...) {
-    print(paste(class(x), "model with", x$nvars, "variables."))
+  print(paste(class(x), "model with", x$nvars, "variables."))
 }
