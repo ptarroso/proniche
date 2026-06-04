@@ -9,5 +9,6 @@
 climate
 gadm
 compile.R
+tests.R
 
 **.pdf
