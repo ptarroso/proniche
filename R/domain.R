@@ -6,21 +6,22 @@
 #' Based on Carpenter et al. (1993). Biodiversity Conservation 2, 667-680
 #'
 #' @param x A matrix of data of environmental values at observed locations
-#'
+#
 #' @return An object of class "domain"
 #' @export
 
 domain <- function(x) {
-    x <- na.exclude(as.matrix(x))
-    rng <- unlist(apply(x, 2, function(d) diff(range(d))))
-    model <- list(
-        model = rng,
-        x = x,
-        nvars = ncol(x),
-        varnames = colnames(x)
-    )
-    class(model) <- "domain"
-    return(model)
+  x <- na.exclude(as.matrix(x))
+  rng <- unlist(apply(x, 2, function(d) diff(range(d))))
+  model <- list(
+    model = rng,
+    x = x,
+    truncate = NULL,
+    nvars = ncol(x),
+    varnames = colnames(x)
+  )
+  class(model) <- "domain"
+  return(model)
 }
 
 #' Predict Method for Domain
@@ -33,20 +34,20 @@ domain <- function(x) {
 #' @return A vector of predictions.
 #' @export
 predict.domain <- function(object, newdata = NULL, ...) {
-    if (is.null(newdata)) {
-        data <- as.matrix(object$x)
-    } else {
-        data <- as.matrix(newdata)
+  if (is.null(newdata)) {
+    data <- as.matrix(object$x)
+  } else {
+    data <- as.matrix(newdata)
+  }
+  D <- rep(NA, nrow(data))
+  for (i in 1:nrow(data)) {
+    if (!any(is.na(data[i, ]))) {
+      G <- gower(unlist(data[i, ]), object$x, object$model)
+      G[which(G > 1)] <- 1
+      D[i] <- max(1 - G, na.rm = T)
     }
-    D <- rep(NA, nrow(data))
-    for (i in 1:nrow(data)) {
-        if (!any(is.na(data[i, ]))) {
-            G <- gower(unlist(data[i, ]), object$x, object$model)
-            G[which(G > 1)] <- 1
-            D[i] <- max(1 - G, na.rm = T)
-        }
-    }
-    return(D)
+  }
+  return(D)
 }
 
 
@@ -66,30 +67,31 @@ predict.domain <- function(object, newdata = NULL, ...) {
 #' @export
 plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
                         border = "red", pnt.col = "gray", add = FALSE, ...) {
-    if (!add) {
-        # plot(x$x[, cols], col = pnt.col, ...)
-        terra::plot(terra::vect(as.matrix(x$x[, cols])),  # to overlay 'bounds' below
-                    clip = FALSE, mar = graphics::par()$mar,
-                    pch = 1,  # to match other plots
-                    col = pnt.col, ...)
+  if (!add) {
+    # plot(x$x[, cols], col = pnt.col, ...)
+    terra::plot(terra::vect(as.matrix(x$x[, cols])), # to overlay 'bounds' below
+      clip = FALSE, mar = graphics::par()$mar,
+      pch = 1, # to match other plots
+      col = pnt.col, ...
+    )
+  }
+  if (length(contours) == 1) {
+    contours <- seq(0, 1, length.out = contours + 2)
+    contours <- contours[-c(1, length(contours))]
+  }
+  for (d in contours) {
+    # Using terra to retrieve boundaries by aggregation
+    bounds <- terra::vect()
+    points <- igower(x, 1 - d)
+    for (i in 1:length(points)) {
+      rng1 <- range(points[[i]][, cols[1]])
+      rng2 <- range(points[[i]][, cols[2]])
+      e <- terra::ext(rng1[1], rng1[2], rng2[1], rng2[2])
+      bounds <- rbind(bounds, terra::vect(e))
     }
-    if (length(contours) == 1) {
-        contours <- seq(0, 1, length.out = contours + 2)
-        contours <- contours[-c(1, length(contours))]
-    }
-    for (d in contours) {
-        # Using terra to retrieve boundaries by aggregation
-        bounds <- terra::vect()
-        points <- igower(x, 1 - d)
-        for (i in 1:length(points)) {
-            rng1 <- range(points[[i]][, cols[1]])
-            rng2 <- range(points[[i]][, cols[2]])
-            e <- terra::ext(rng1[1], rng1[2], rng2[1], rng2[2])
-            bounds <- rbind(bounds, terra::vect(e))
-        }
-        bounds <- terra::aggregate(bounds)
-        terra::lines(bounds, col = border, ...)
-    }
+    bounds <- terra::aggregate(bounds)
+    terra::lines(bounds, col = border, ...)
+  }
 }
 
 #' Print Method for Domain
@@ -100,5 +102,5 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.domain <- function(x, ...) {
-    print(paste(class(x), "model with", x$nvars, "variables."))
+  print(paste(class(x), "model with", x$nvars, "variables."))
 }
