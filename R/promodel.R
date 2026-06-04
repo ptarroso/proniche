@@ -191,10 +191,10 @@ truncate.proniche <- function(x, p_obs = 1, test_data = NULL) {
     stop("Proportion of observations argumenr 'p_obs' must be between 0 and 1.")
   }
   test_data <- as.vector(test_data)
-  values <- sort(predict(x, newdata = test_data))
+  values <- sort(predict(x, newdata = test_data), decreasing = TRUE)
   values <- values[!is.na(values)]
   n <- length(values)
   i <- floor(n * p_obs)
-  x$model$truncate <- values[i]
+  x$proniche$truncate <- values[i]
   x
 }
