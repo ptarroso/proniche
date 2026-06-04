@@ -4,12 +4,14 @@
 \alias{predict.mahalanobis}
 \title{Predict Method for Mahalanobis}
 \usage{
-\method{predict}{mahalanobis}(object, newdata = NULL, ...)
+\method{predict}{mahalanobis}(object, newdata = NULL, type = "raw", ...)
 }
 \arguments{
 \item{object}{An object of class `mahalanobis`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
+
+\item{type}{Type of response: either "raw" (default) for original values of model or "truncated" for niche truncation if defined.}
 
 \item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }

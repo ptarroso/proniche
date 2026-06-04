@@ -4,12 +4,14 @@
 \alias{predict.convexhull}
 \title{Predict Method for Convex Hull}
 \usage{
-\method{predict}{convexhull}(object, newdata = NULL, ...)
+\method{predict}{convexhull}(object, newdata = NULL, type = "raw", ...)
 }
 \arguments{
 \item{object}{A model object of class `convexhull`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
+
+\item{type}{Type of response: either "raw" (default) for original values of model or "truncated" for niche truncation if defined.}
 
 \item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }

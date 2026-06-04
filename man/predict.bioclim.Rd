@@ -4,12 +4,14 @@
 \alias{predict.bioclim}
 \title{Predict Method for Bioclim}
 \usage{
-\method{predict}{bioclim}(object, newdata = NULL, ...)
+\method{predict}{bioclim}(object, newdata = NULL, type = "raw", ...)
 }
 \arguments{
 \item{object}{An object of class `bioclim`.}
 
 \item{newdata}{New data for predictions, as a matrix or coercible to matrix. If NULL (default), predictions are given on the training data.}
+
+\item{type}{Type of response: either "raw" (default) for original values of model or "truncated" for nich truncation if defined.}
 
 \item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }

@@ -30,11 +30,12 @@ mahalanobis <- function(x) {
 #'
 #' @param object An object of class `mahalanobis`.
 #' @param newdata New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.
+#' @param type Type of response: either "raw" (default) for original values of model or "truncated" for niche truncation if defined.
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @importFrom stats pchisq
 #' @export
-predict.mahalanobis <- function(object, newdata = NULL, ...) {
+predict.mahalanobis <- function(object, newdata = NULL, type = "raw", ...) {
   if (is.null(newdata)) {
     data <- as.matrix(object$x)
   } else {
@@ -46,6 +47,13 @@ predict.mahalanobis <- function(object, newdata = NULL, ...) {
     M[i] <- mah_dist(unlist(data[i, ]), object$model$u, object$model$sigma)
   }
   p <- 1 - pchisq(M, object$nvars) # (AMB edited)
+
+  if (type == "truncated") {
+    val <- object$truncate$value
+    if (is.null(val)) stop("No truncation value.")
+    p <- p >= val
+  }
+
   return(p)
 }
 
@@ -84,5 +92,11 @@ plot.mahalanobis <- function(x, cols = 1:2,
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.mahalanobis <- function(x, ...) {
-  print(paste(class(x), "model with", x$nvars, "variables."))
+  msg <- paste0(class(x), " model with ", x$nvars, " variables.\n")
+  if (is.null(x$truncate)) {
+    msg <- paste0(msg, "No truncation defined.\n")
+  } else {
+    msg <- paste0(msg, "Truncation at value of ", x$truncate$value, "\n")
+  }
+  cat(msg)
 }

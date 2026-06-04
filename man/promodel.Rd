@@ -79,12 +79,12 @@ head(vals)
 
 mod <- promodel(vals, method = "mahalanobis")
 
-plot(mod)  # in the environmental space defined by the 1st two variables
-plot(mod, cols = c(3, 4))  # in the environmental space of the 3rd and 4th vars
+plot(mod) # in the environmental space defined by the 1st two variables
+plot(mod, cols = c(3, 4)) # in the environmental space of the 3rd and 4th vars
 
 pred <- terra::predict(vars, mod)
 
-terra::plot(pred)  # in geographic space
+terra::plot(pred) # in geographic space
 terra::points(occs, pch = 20, cex = 0.5)
 
 }

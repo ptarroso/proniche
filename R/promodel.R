@@ -142,7 +142,11 @@ promodel <- function(vals, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
 #' @return A numeric vector or SpatRaster with predicted suitability values.
 #' @export
 #'
-predict.proniche <- function(object, newdata = NULL, ...) {
+predict.proniche <- function(object, newdata = NULL, type = "raw", ...) {
+  modes <- c("raw", "truncated")
+  if (!any(type %in% modes)) {
+    stop("Type mus be either 'raw' or 'truncated'")
+  }
   if (inherits(newdata, "SpatRaster")) {
     if (is.null(object$proniche$varnames)) {
       data <- as.matrix(newdata)
@@ -156,7 +160,7 @@ predict.proniche <- function(object, newdata = NULL, ...) {
       data <- newdata[, object$proniche$varnames, drop = FALSE]
     }
   }
-  p <- predict(object$proniche, newdata = data, ...)
+  p <- predict(object$proniche, newdata = data, type = type, ...)
   if (inherits(newdata, "SpatRaster")) {
     pred <- newdata[[1]]
     pred[][, 1] <- p
@@ -191,10 +195,10 @@ truncate.proniche <- function(x, p_obs = 1, test_data = NULL) {
     stop("Proportion of observations argumenr 'p_obs' must be between 0 and 1.")
   }
   test_data <- as.vector(test_data)
-  values <- sort(predict(x, newdata = test_data), decreasing = TRUE)
-  values <- values[!is.na(values)]
+  values <- predict(x, newdata = test_data, type = "raw")
+  values <- sort(values[!is.na(values)], decreasing = TRUE)
   n <- length(values)
   i <- floor(n * p_obs)
-  x$proniche$truncate <- values[i]
+  x$proniche$truncate <- data.frame(p_obs = p_obs, n_obs = i, value = values[i])
   x
 }

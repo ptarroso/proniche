@@ -66,8 +66,7 @@ predict.bioclim <- function(object, newdata = NULL, type = "raw", ...) {
   }
 
   if (type == "truncated") {
-    val <- object$truncate
-    print(object)
+    val <- object$truncate$value
     if (is.null(val)) stop("No truncation value.")
     pred <- pred >= val
   }
@@ -116,7 +115,7 @@ print.bioclim <- function(x, ...) {
   if (is.null(x$truncate)) {
     msg <- paste0(msg, "No truncation defined.\n")
   } else {
-    msg <- paste0(msg, "Truncation at value of ", x$truncate, "\n")
+    msg <- paste0(msg, "Truncation at value of ", x$truncate$value, "\n")
   }
   cat(msg)
 }

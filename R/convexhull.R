@@ -60,10 +60,11 @@ convexhull <- function(x, ...) {
 #'
 #' @param object A model object of class `convexhull`.
 #' @param newdata New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.
+#' @param type Type of response: either "raw" (default) for original values of model or "truncated" for niche truncation if defined.
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @export
-predict.convexhull <- function(object, newdata = NULL, ...) {
+predict.convexhull <- function(object, newdata = NULL, type = "raw", ...) {
   if (is.null(newdata)) {
     data <- as.matrix(object$x)
     mask <- NULL
@@ -76,6 +77,13 @@ predict.convexhull <- function(object, newdata = NULL, ...) {
     pred <- pred + geometry::inhulln(object$model[[i]], data)
   }
   pred[mask] <- NA
+
+  if (type == "truncated") {
+    val <- object$truncate$value
+    if (is.null(val)) stop("No truncation value.")
+    pred <- pred >= val
+  }
+
   return(pred)
 }
 
@@ -115,5 +123,11 @@ plot.convexhull <- function(x, cols = 1:2, border = "red",
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.convexhull <- function(x, ...) {
-  print(paste(class(x), "model with", x$nvars, "variables."))
+  msg <- paste0(class(x), " model with ", x$nvars, " variables.\n")
+  if (is.null(x$truncate)) {
+    msg <- paste0(msg, "No truncation defined.\n")
+  } else {
+    msg <- paste0(msg, "Truncation at value of ", x$truncate$value, "\n")
+  }
+  cat(msg)
 }

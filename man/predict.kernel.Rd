@@ -4,12 +4,14 @@
 \alias{predict.kernel}
 \title{Predict Method for Kernel}
 \usage{
-\method{predict}{kernel}(object, newdata = NULL, ...)
+\method{predict}{kernel}(object, newdata = NULL, type = "raw", ...)
 }
 \arguments{
 \item{object}{An object of class `kernel`.}
 
 \item{newdata}{New data for predictions in a form of matrix or conversible to matrix.  If NULL (default) predictions are given to training data.}
+
+\item{type}{Type of response: either "raw" (default) for original values of model or "truncated" for niche truncation if defined.}
 
 \item{...}{Additional arguments (currently ignored, included for consistency with the generic).}
 }

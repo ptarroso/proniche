@@ -30,10 +30,11 @@ domain <- function(x) {
 #'
 #' @param object A model object of class `domain`.
 #' @param newdata New data for predictions in a form of matrix or coercible to matrix.  If NULL (default) predictions are given to training data.
+#' @param type Type of response: either "raw" (default) for original values of model or "truncated" for niche truncation if defined.
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @return A vector of predictions.
 #' @export
-predict.domain <- function(object, newdata = NULL, ...) {
+predict.domain <- function(object, newdata = NULL, type = "raw", ...) {
   if (is.null(newdata)) {
     data <- as.matrix(object$x)
   } else {
@@ -47,6 +48,13 @@ predict.domain <- function(object, newdata = NULL, ...) {
       D[i] <- max(1 - G, na.rm = T)
     }
   }
+
+  if (type == "truncated") {
+    val <- object$truncate$p_obs
+    if (is.null(val)) stop("No truncation value.")
+    D <- D >= val
+  }
+
   return(D)
 }
 
@@ -102,5 +110,11 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.domain <- function(x, ...) {
-  print(paste(class(x), "model with", x$nvars, "variables."))
+  msg <- paste0(class(x), " model with ", x$nvars, " variables.\n")
+  if (is.null(x$truncate)) {
+    msg <- paste0(msg, "No truncation defined.\n")
+  } else {
+    msg <- paste0(msg, "Truncation at similarity value of ", x$truncate$p_obs, "\n")
+  }
+  cat(msg)
 }
