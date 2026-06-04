@@ -7,26 +7,27 @@
 #' @return An object of class "mvnormal"
 #' @export
 mvnormal <- function(x) {
-    data <- na.exclude(as.matrix(x))
-    # Stop if not enough data points
-    if (nrow(data) < 5) {
-        stop("Low number of samples. Consider resampling with envResample.")
-    }
-    if (ncol(data) < 2) {
-        stop("input 'method' requires more than one variable.")
-    }
-    # estimate mean value and covmat (sig)
-    avg <- colMeans(x, na.rm = T)
-    sig <- stats::cov(x)
+  data <- na.exclude(as.matrix(x))
+  # Stop if not enough data points
+  if (nrow(data) < 5) {
+    stop("Low number of samples. Consider resampling with envResample.")
+  }
+  if (ncol(data) < 2) {
+    stop("input 'method' requires more than one variable.")
+  }
+  # estimate mean value and covmat (sig)
+  avg <- colMeans(x, na.rm = T)
+  sig <- stats::cov(x)
 
-    model <- list(
-        model = list(u = avg, sigma = sig),
-        x = x,
-        nvars = ncol(x),
-        varnames = colnames(x)
-    )
-    class(model) <- "mvnormal"
-    return(model)
+  model <- list(
+    model = list(u = avg, sigma = sig),
+    x = x,
+    truncate = NULL,
+    nvars = ncol(x),
+    varnames = colnames(x)
+  )
+  class(model) <- "mvnormal"
+  return(model)
 }
 
 #' Predict Method for Multivariate Normal Distribution model
@@ -39,16 +40,16 @@ mvnormal <- function(x) {
 #' @return A vector of predictions.
 #' @export
 predict.mvnormal <- function(object, newdata = NULL, ...) {
-    if (is.null(newdata)) {
-        data <- as.matrix(object$x)
-    } else {
-        data <- as.matrix(newdata)
-    }
-    avg <- object$model$u
-    sig <- object$model$sigma
+  if (is.null(newdata)) {
+    data <- as.matrix(object$x)
+  } else {
+    data <- as.matrix(newdata)
+  }
+  avg <- object$model$u
+  sig <- object$model$sigma
 
-    p <- dmnorm(data, avg, sig)
-    return(p)
+  p <- dmnorm(data, avg, sig)
+  return(p)
 }
 
 #' Plot Method for Multivariate Normal Distribution model
@@ -68,13 +69,13 @@ plot.mvnormal <- function(x, cols = 1:2,
                           contours = c(1, 1.64, 1.96, 2.33),
                           border = "red", pnt.col = "gray", add = FALSE,
                           ...) {
-    if (!add) {
-        plot(x$x[, cols], col = pnt.col, ...)
-    }
-    for (sdev in contours) {
-        pnt <- ellipse_from_cov(x$model$sigma, x$model$u, sdev, cols)
-        polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
-    }
+  if (!add) {
+    plot(x$x[, cols], col = pnt.col, ...)
+  }
+  for (sdev in contours) {
+    pnt <- ellipse_from_cov(x$model$sigma, x$model$u, sdev, cols)
+    polygon(pnt[, 1], pnt[, 2], border = border, col = NA, ...)
+  }
 }
 
 #' Print Method for Multivariate Normal Distribution model
@@ -85,5 +86,5 @@ plot.mvnormal <- function(x, cols = 1:2,
 #' @param ... Additional arguments (currently ignored, included for consistency with the generic).
 #' @export
 print.mvnormal <- function(x, ...) {
-    print(paste(class(x), "model with", x$nvars, "variables."))
+  print(paste(class(x), "model with", x$nvars, "variables."))
 }
