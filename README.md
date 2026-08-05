@@ -23,6 +23,9 @@ from the presence sites, with no background or pseudo-absence data):
 # or:
 # remotes::install_github("https://github.com/ptarroso/proniche")
 
+# install.packages("terra")
+# install.packages("geodata")
+
 library(proniche)
 library(terra)
 library(geodata)
@@ -209,7 +212,7 @@ terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main = "Multivariate N
 ### Truncated predictions
 
 It is also possible to define a hard boundary for the inferred
-environmental niche, predicting only the points inside the defined
+environmental niche, predicting only the pixels inside the defined
 envelope:
 
 ``` r
@@ -239,7 +242,6 @@ maximum similarity. A test dataset can be used instead:
 
 ``` r
 buf <- buffer(terra::vect(occs), 1000)
-#> Warning: [vect] guessed crs
 test_data <- terra::extract(vars, buf, ID = FALSE)
 dm_fit_trunc_test <- truncate(dm_fit, test_data = test_data)
 dm_pred_trunc_test <- predict(dm_fit_trunc_test, vars, type = "truncated")
@@ -318,5 +320,5 @@ procratio <- kuenm::kuenm_proc(occ.test = occs,
 
 procratio$pROC_summary
 #> Mean_AUC_ratio_at_5%            pval_pROC 
-#>              1.42551              0.00000
+#>             1.426175             0.000000
 ```
