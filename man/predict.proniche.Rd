@@ -9,10 +9,11 @@
 \arguments{
 \item{object}{A model object of class `proniche`.}
 
-\item{newdata}{A matrix, data frame, or SpatRaster containing the predictor
-variables. If a SpatRaster is supplied, a SpatRaster is returned.}
+\item{newdata}{A matrix, data frame, or SpatRaster containing the predictor}
 
-\item{...}{Additional arguments to model prediction.}
+\item{type}{The type of prediction to generate. Can be "raw" (default) or "truncated".}
+
+\item{...}{Additional arguments to pass to predict().}
 }
 \value{
 A numeric vector or SpatRaster with predicted suitability values.

@@ -124,12 +124,12 @@ plot(mm_fit, main = "Mahalanobis")
 plot(km_fit, main = "Kernel")
 plot(mv_fit, main = "Multivariate Normal")
 
-plot(bc_fit, cols = c(3, 4), main = "Bioclim")
-plot(ch_fit, cols = c(3, 4), main = "Convex Hull")
-plot(dm_fit, cols = c(3, 4), main = "Domain")
-plot(mm_fit, cols = c(3, 4), main = "Mahalanobis")
-plot(km_fit, cols = c(3, 4), main = "Kernel")
-plot(mv_fit, cols = c(3, 4), main = "Multivariate Normal")
+plot(bc_fit, cols = c(2, 4), main = "Bioclim")
+plot(ch_fit, cols = c(2, 4), main = "Convex Hull")
+plot(dm_fit, cols = c(2, 4), main = "Domain")
+plot(mm_fit, cols = c(2, 4), main = "Mahalanobis")
+plot(km_fit, cols = c(2, 4), main = "Kernel")
+plot(mv_fit, cols = c(2, 4), main = "Multivariate Normal")
 ```
 
 ### Map model predictions
@@ -173,6 +173,42 @@ terra::plot(mm_rcl, range = c(0, 1), type = "continuous", main = "Mahalanobis")
 terra::plot(km_rcl, range = c(0, 1), type = "continuous", main = "Kernel")
 terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main = "Multivariate Normal")
 ```
+
+### Truncated predictions
+
+It is also possible to define a hard boundary for the inferred  environmental niche, predicting only the points inside the defined envelope:
+
+```{r truncation, fig.width=6, fig.height=3}
+bc_fit_trunc <- truncate(bc_fit, p_obs = 1)
+ch_fit_trunc <- truncate(ch_fit, p_obs = 1)
+dm_fit_trunc <- truncate(dm_fit, p_obs = 1)
+mm_fit_trunc <- truncate(mm_fit, p_obs = 1)
+km_fit_trunc <- truncate(km_fit, p_obs = 1)
+mv_fit_trunc <- truncate(mv_fit, p_obs = 1)
+
+bc_pred_trunc <- predict(bc_fit_trunc, vars, type = "truncated")
+ch_pred_trunc <- predict(ch_fit_trunc, vars, type = "truncated")
+dm_pred_trunc <- predict(dm_fit_trunc, vars, type = "truncated")
+mm_pred_trunc <- predict(mm_fit_trunc, vars, type = "truncated")
+km_pred_trunc <- predict(km_fit_trunc, vars, type = "truncated")
+mv_pred_trunc <- predict(mv_fit_trunc, vars, type = "truncated")
+
+plot(c(bc_pred_trunc, ch_pred_trunc, dm_pred_trunc,
+        mm_pred_trunc, km_pred_trunc, mv_pred_trunc), 
+      mar = c(1.5, 1.5, 2, 2))
+```
+
+Note that, in the case of Domain, all occurrence observations have maximum similarity. A test dataset can be used instead:
+
+```{r trunc_test}
+buf <- buffer(terra::vect(occs), 1000)
+test_data <- terra::extract(vars, buf, ID = FALSE)
+dm_fit_trunc_test <- truncate(dm_fit, test_data = test_data)
+dm_pred_trunc_test <- predict(dm_fit_trunc_test, vars, type = "truncated")
+plot(dm_pred_trunc_test, main = "Domain truncated from test data")
+```
+
+
 
 ### Ensemble predictions
 

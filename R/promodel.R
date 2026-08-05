@@ -137,15 +137,15 @@ promodel <- function(vals, method = "bioclim", na.rm = TRUE, dup.rm = FALSE,
 #'
 #' @param object A model object of class `proniche`.
 #' @param newdata A matrix, data frame, or SpatRaster containing the predictor
-#'   variables. If a SpatRaster is supplied, a SpatRaster is returned.
-#' @param ... Additional arguments to model prediction.
+#' @param type The type of prediction to generate. Can be "raw" (default) or "truncated".
+#' @param ... Additional arguments to pass to predict().
 #' @return A numeric vector or SpatRaster with predicted suitability values.
 #' @export
 #'
 predict.proniche <- function(object, newdata = NULL, type = "raw", ...) {
   modes <- c("raw", "truncated")
   if (!any(type %in% modes)) {
-    stop("Type mus be either 'raw' or 'truncated'")
+    stop("Type must be either 'raw' or 'truncated'")
   }
   if (inherits(newdata, "SpatRaster")) {
     if (is.null(object$proniche$varnames)) {
@@ -189,10 +189,17 @@ print.proniche <- function(x, ...) {
   print(x[["proniche"]])
 }
 
+
+#' Truncate method for proniche models
+#'
+#' @param x An object of class `proniche`.
+#' @param p_obs Proportion of occurrence observations to include in the truncated envelope, between 0 and 1.
+#' @param test_data Optional data frame containing test values of the variables in 'con'
+#' @return The truncated fitted model in environmental space.
 #' @export
 truncate.proniche <- function(x, p_obs = 1, test_data = NULL) {
   if ((p_obs < 0) || (p_obs > 1)) {
-    stop("Proportion of observations argumenr 'p_obs' must be between 0 and 1.")
+    stop("'p_obs' must be between 0 and 1.")
   }
   values <- predict(x, newdata = test_data, type = "raw")
   values <- sort(values[!is.na(values)], decreasing = TRUE)

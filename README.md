@@ -1,26 +1,22 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-
-
 # proniche: PResence-Only NICHE modelling
 
-R package for computing niche models using a variety of **truly presence-only methods** (i.e., methods that use only environmental info from the presence sites, with no background or pseudo-absence data):
+R package for computing niche models using a variety of **truly
+presence-only methods** (i.e., methods that use only environmental info
+from the presence sites, with no background or pseudo-absence data):
 
--   Bioclim (rectangular environmental envelope)
--   Convex hull (in environmental space)
--   Domain
--   Mahalanobis distance
--   Kernel density estimate
--   Multivariate normal distribution
+- Bioclim (rectangular environmental envelope)
+- Convex hull (in environmental space)
+- Domain
+- Mahalanobis distance
+- Kernel density estimate
+- Multivariate normal distribution
 
 ## User guide
 
 ### (Install and) load packages
-
 
 ``` r
 # devtools::install_github("https://github.com/ptarroso/proniche")
@@ -33,7 +29,6 @@ library(geodata)
 ```
 
 ### Import some example data within a region
-
 
 ``` r
 # you can use the example data bundled with the 'proniche' package:
@@ -53,10 +48,7 @@ vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))  # xmin, xmax, ymin, ymax
 terra::plot(vars)
 ```
 
-<div class="figure">
-<img src="man/figures/README-usage-1.png" alt="plot of chunk usage" width="100%" />
-<p class="caption">plot of chunk usage</p>
-</div>
+<img src="man/figures/README-usage-1.png" alt="" width="100%" />
 
 ``` r
 
@@ -78,23 +70,19 @@ terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
 points(occs, pch = 20, cex = 0.2)
 ```
 
-<div class="figure">
-<img src="man/figures/README-usage-2.png" alt="plot of chunk usage" width="100%" />
-<p class="caption">plot of chunk usage</p>
-</div>
+<img src="man/figures/README-usage-2.png" alt="" width="100%" />
 
 ### Extract environmental values at the presence points
-
 
 ``` r
 vals <- terra::extract(vars, occs, ID = FALSE)
 
 # remove duplicates:
 nrow(vals)
-#> [1] 372
+#> [1] 381
 vals <- unique(vals)
 nrow(vals)
-#> [1] 78
+#> [1] 79
 
 head(vals)
 #>       bio_1    bio_6 bio_12 bio_14
@@ -102,26 +90,20 @@ head(vals)
 #> 3  16.73919 5.720833    570     14
 #> 7  17.62214 5.912360    268      1
 #> 12 17.96979 6.000000    210      1
-#> 16 17.76883 6.351948    294      1
-#> 17 17.30842 5.473000    300      2
+#> 17 17.76883 6.351948    294      1
+#> 19 17.30842 5.473000    300      2
 ```
 
-
 ### Plot frequency distributions
-
 
 ``` r
 par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
 
-<div class="figure">
-<img src="man/figures/README-freqPlot-1.png" alt="plot of chunk freqPlot" width="100%" />
-<p class="caption">plot of chunk freqPlot</p>
-</div>
+<img src="man/figures/README-freqPlot-1.png" alt="" width="100%" />
 
 ### Fit true presence-only models
-
 
 ``` r
 bc_fit <- proniche::promodel(vals, method = "bioclim")
@@ -134,8 +116,10 @@ mv_fit <- proniche::promodel(vals, method = "mvnormal")
 
 ### Plot models in environmental space
 
-The plots show the bidimensional environmental space defined by two variables at a time. By default, the first two variables in the model are used, but the `cols` argument can define a different two-variable combination:
-
+The plots show the bidimensional environmental space defined by two
+variables at a time. By default, the first two variables in the model
+are used, but the `cols` argument can define a different two-variable
+combination:
 
 ``` r
 par(mfrow = c(2, 3))
@@ -148,28 +132,21 @@ plot(km_fit, main = "Kernel")
 plot(mv_fit, main = "Multivariate Normal")
 ```
 
-<div class="figure">
-<img src="man/figures/README-checkmodel-1.png" alt="plot of chunk checkmodel" width="100%" />
-<p class="caption">plot of chunk checkmodel</p>
-</div>
+<img src="man/figures/README-checkmodel-1.png" alt="" width="100%" />
 
 ``` r
 
-plot(bc_fit, cols = c(3, 4), main = "Bioclim")
-plot(ch_fit, cols = c(3, 4), main = "Convex Hull")
-plot(dm_fit, cols = c(3, 4), main = "Domain")
-plot(mm_fit, cols = c(3, 4), main = "Mahalanobis")
-plot(km_fit, cols = c(3, 4), main = "Kernel")
-plot(mv_fit, cols = c(3, 4), main = "Multivariate Normal")
+plot(bc_fit, cols = c(2, 4), main = "Bioclim")
+plot(ch_fit, cols = c(2, 4), main = "Convex Hull")
+plot(dm_fit, cols = c(2, 4), main = "Domain")
+plot(mm_fit, cols = c(2, 4), main = "Mahalanobis")
+plot(km_fit, cols = c(2, 4), main = "Kernel")
+plot(mv_fit, cols = c(2, 4), main = "Multivariate Normal")
 ```
 
-<div class="figure">
-<img src="man/figures/README-checkmodel-2.png" alt="plot of chunk checkmodel" width="100%" />
-<p class="caption">plot of chunk checkmodel</p>
-</div>
+<img src="man/figures/README-checkmodel-2.png" alt="" width="100%" />
 
 ### Map model predictions
-
 
 ``` r
 bc_pred <- predict(bc_fit, vars)
@@ -188,17 +165,27 @@ terra::plot(km_pred, type = "continuous", main = "Kernel")
 terra::plot(mv_pred, type = "continuous", main = "Multivariate Normal")
 ```
 
-<div class="figure">
-<img src="man/figures/README-predictmodel-1.png" alt="plot of chunk predictmodel" width="100%" />
-<p class="caption">plot of chunk predictmodel</p>
-</div>
+<img src="man/figures/README-predictmodel-1.png" alt="" width="100%" />
 
 ### Reclassify predictions into a comparable scale
 
-From [Formoso-Freire et al. (2021)](https://doi.org/10.1016/j.biocon.2023.110361):
+From [Formoso-Freire et
+al. (2021)](https://doi.org/10.1016/j.biocon.2023.110361):
 
-"*This function rescales the predictions into a ranked suitability value for each grid cell, thus informing about the suitability of climatic conditions in relative terms and hence which locations are more suitable than others. Current implementations of BIOCLIM compute a percentile distribution of the values of each environmental variable at known presence locations. Then, the closer to the 50th percentile (the median), the more suitable each location is according to that variable. However, the more variables are included in the model, the less suitable any location is considered, because it is less likely to be close to the median for all variables, and more likely to be outside the range observed at known presences for at least one variable. Our proposed rescaling of Bioclim predictions removes the dependence of the potential distribution on the number of variables included, and it provides more realistic predictions*".
-
+“*This function rescales the predictions into a ranked suitability value
+for each grid cell, thus informing about the suitability of climatic
+conditions in relative terms and hence which locations are more suitable
+than others. Current implementations of BIOCLIM compute a percentile
+distribution of the values of each environmental variable at known
+presence locations. Then, the closer to the 50th percentile (the
+median), the more suitable each location is according to that variable.
+However, the more variables are included in the model, the less suitable
+any location is considered, because it is less likely to be close to the
+median for all variables, and more likely to be outside the range
+observed at known presences for at least one variable. Our proposed
+rescaling of Bioclim predictions removes the dependence of the potential
+distribution on the number of variables included, and it provides more
+realistic predictions*”.
 
 ``` r
 bc_rcl <- proniche::quantReclass(bc_pred[[1]])
@@ -217,15 +204,55 @@ terra::plot(km_rcl, range = c(0, 1), type = "continuous", main = "Kernel")
 terra::plot(mv_rcl, range = c(0, 1), type = "continuous", main = "Multivariate Normal")
 ```
 
-<div class="figure">
-<img src="man/figures/README-reclass-1.png" alt="plot of chunk reclass" width="100%" />
-<p class="caption">plot of chunk reclass</p>
-</div>
+<img src="man/figures/README-reclass-1.png" alt="" width="100%" />
+
+### Truncated predictions
+
+It is also possible to define a hard boundary for the inferred
+environmental niche, predicting only the points inside the defined
+envelope:
+
+``` r
+bc_fit_trunc <- truncate(bc_fit, p_obs = 1)
+ch_fit_trunc <- truncate(ch_fit, p_obs = 1)
+dm_fit_trunc <- truncate(dm_fit, p_obs = 1)
+mm_fit_trunc <- truncate(mm_fit, p_obs = 1)
+km_fit_trunc <- truncate(km_fit, p_obs = 1)
+mv_fit_trunc <- truncate(mv_fit, p_obs = 1)
+
+bc_pred_trunc <- predict(bc_fit_trunc, vars, type = "truncated")
+ch_pred_trunc <- predict(ch_fit_trunc, vars, type = "truncated")
+dm_pred_trunc <- predict(dm_fit_trunc, vars, type = "truncated")
+mm_pred_trunc <- predict(mm_fit_trunc, vars, type = "truncated")
+km_pred_trunc <- predict(km_fit_trunc, vars, type = "truncated")
+mv_pred_trunc <- predict(mv_fit_trunc, vars, type = "truncated")
+
+plot(c(bc_pred_trunc, ch_pred_trunc, dm_pred_trunc,
+        mm_pred_trunc, km_pred_trunc, mv_pred_trunc), 
+      mar = c(1.5, 1.5, 2, 2))
+```
+
+<img src="man/figures/README-truncation-1.png" alt="" width="100%" />
+
+Note that, in the case of Domain, all occurrence observations have
+maximum similarity. A test dataset can be used instead:
+
+``` r
+buf <- buffer(terra::vect(occs), 1000)
+#> Warning: [vect] guessed crs
+test_data <- terra::extract(vars, buf, ID = FALSE)
+dm_fit_trunc_test <- truncate(dm_fit, test_data = test_data)
+dm_pred_trunc_test <- predict(dm_fit_trunc_test, vars, type = "truncated")
+plot(dm_pred_trunc_test, main = "Domain truncated from test data")
+```
+
+<img src="man/figures/README-trunc_test-1.png" alt="" width="100%" />
 
 ### Ensemble predictions
 
-There are several ways to ensemble model predictions. The example below simply uses the local mean prediction across models, showing also the variance for an assessment of uncertainty:
-
+There are several ways to ensemble model predictions. The example below
+simply uses the local mean prediction across models, showing also the
+variance for an assessment of uncertainty:
 
 ``` r
 preds <- c(bc_rcl, ch_rcl, dm_rcl, mm_rcl, km_rcl, mv_rcl)
@@ -238,29 +265,19 @@ terra::plot(ens_mean, range = c(0, 1), main = "Ensemble mean")
 terra::plot(ens_var, range = c(0, 1), main = "Ensemble variance")
 ```
 
-<div class="figure">
-<img src="man/figures/README-ensemble-1.png" alt="plot of chunk ensemble" width="100%" />
-<p class="caption">plot of chunk ensemble</p>
-</div>
+<img src="man/figures/README-ensemble-1.png" alt="" width="100%" />
 
 ## Evaluate predictions
 
-The following example code lines compute several different evaluation metrics for the ensemble mean model (this section requires loading a few more packages):
-
+The following example code lines compute several different evaluation
+metrics for the ensemble mean model (this section requires loading a few
+more packages):
 
 ``` r
 library(modEvA)
-#> Error in `library()`:
-#> ! there is no package called 'modEvA'
 library(pROC)
-#> Error in `library()`:
-#> ! there is no package called 'pROC'
 library(kuenm)
-#> Error in `library()`:
-#> ! there is no package called 'kuenm'
 library(raster)
-#> Error in `library()`:
-#> ! there is no package called 'raster'
 
 par(mfrow = c(2, 2))
 
@@ -270,40 +287,27 @@ modEvA::threshMeasures(obs = occs, pred = ens_mean, thresh = "maxTSS",
                        measures = c("CCR", "Sensitivity", "Specificity", 
                        "kappa", "TSS"), rm.dup = TRUE, standardize = FALSE,
                        main = "Threshold-based metrics")
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'modEvA'
 
 modEvA::Boyce(obs = occs, pred = ens_mean, rm.dup.points = TRUE,
               main = "Continuous Boyce Index")
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'modEvA'
 
 modEvA::AUC(obs = occs, pred = ens_mean, rm.dup = TRUE, main = "ROC curve")
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'modEvA'
 
 
 # partial AUC in the pROC package requires instead a presence/absence table:
 
 dat <- modEvA::inputMunch(obs = occs, pred = ens_mean, rm.dup = TRUE)
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'modEvA'
 
 str(dat)
-#> Error:
-#> ! object 'dat' not found
 
 proc <- pROC::roc(response = dat$obs, predictor = dat$pred, 
                   partial.auc = c(0, 0.2), partial.auc.correct = TRUE)
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'pROC'
 
 pROC::plot.roc(proc, print.auc = TRUE, auc.polygon = TRUE, 
                max.auc.polygon = TRUE)
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'pROC'
 ```
 
+<img src="man/figures/README-modev-1.png" alt="" width="100%" />
 
 ``` r
 # we can also compute the partial ROC ratio under a maximum potential error:
@@ -311,10 +315,8 @@ pROC::plot.roc(proc, print.auc = TRUE, auc.polygon = TRUE,
 procratio <- kuenm::kuenm_proc(occ.test = occs, 
                                model = raster::raster(ens_mean), 
                                threshold = 5)
-#> Error in `loadNamespace()`:
-#> ! there is no package called 'kuenm'
 
 procratio$pROC_summary
-#> Error:
-#> ! object 'procratio' not found
+#> Mean_AUC_ratio_at_5%            pval_pROC 
+#>              1.42551              0.00000
 ```
