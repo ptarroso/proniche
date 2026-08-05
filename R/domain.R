@@ -64,9 +64,9 @@ predict.domain <- function(object, newdata = NULL, type = "raw", ...) {
 #' This function plots the `domain` model.
 #'
 #' @param x An object of class `domain`.
-#' @param cols the columns indices of the data (variables) to use to plot. Only 2 values are used.
+#' @param cols the column indices of the data (variables) to use to plot. Only 2 values can be used at a time.
 #' @param contours Where to plot the extents on Gower's similarity values.
-#' @param border The color of the polygon borders deppicting model extent,
+#' @param border The color of the polygon borders depicting model extent.
 #' @param pnt.col The color of the training data points (if add=FALSE).
 #' @param add Boolean to add to current device or, if FALSE, to generate a new plot.
 #' @param ... Other plotting parameters to be passed (lwd, lty,...).
@@ -78,9 +78,11 @@ plot.domain <- function(x, cols = 1:2, contours = seq(0.9, 1, 0.01),
   if (!add) {
     # plot(x$x[, cols], col = pnt.col, ...)
     terra::plot(terra::vect(as.matrix(x$x[, cols])), # to overlay 'bounds' below
-      clip = FALSE, mar = graphics::par()$mar,
-      pch = 1, # to match other plots
-      col = pnt.col, ...
+                xlab = x$varnames[cols[1]],
+                ylab = x$varnames[cols[2]],
+                clip = FALSE, mar = graphics::par()$mar,
+                pch = 1, # to match other plots
+                col = pnt.col, ...
     )
   }
   if (length(contours) == 1) {

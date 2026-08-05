@@ -320,5 +320,5 @@ procratio <- kuenm::kuenm_proc(occ.test = occs,
 
 procratio$pROC_summary
 #> Mean_AUC_ratio_at_5%            pval_pROC 
-#>             1.426175             0.000000
+#>             1.422413             0.000000
 ```
