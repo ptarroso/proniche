@@ -51,7 +51,7 @@ vars <- terra::crop(vars, terra::ext(-10, 4, 36, 44))  # xmin, xmax, ymin, ymax
 terra::plot(vars)
 ```
 
-<img src="man/figures/README-usage-1.png" alt="" width="100%" />
+<img src="man/figures/README-usage-1.png" alt="" width="500px" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -73,7 +73,7 @@ terra::plot(vars[[1]] * 0, col = "tan", background = "lightblue",
 points(occs, pch = 20, cex = 0.2)
 ```
 
-<img src="man/figures/README-usage-2.png" alt="" width="100%" />
+<img src="man/figures/README-usage-2.png" alt="" width="500px" style="display: block; margin: auto;" />
 
 ### Extract environmental values at the presence points
 
@@ -104,7 +104,7 @@ par(mfrow = c(2, 2), mar = c(2, 2, 2, 1))
 proniche::freqPlot(vals, vars)
 ```
 
-<img src="man/figures/README-freqPlot-1.png" alt="" width="100%" />
+<img src="man/figures/README-freqPlot-1.png" alt="" width="700px" style="display: block; margin: auto;" />
 
 ### Fit true presence-only models
 
@@ -237,8 +237,16 @@ plot(c(bc_pred_trunc, ch_pred_trunc, dm_pred_trunc,
 
 <img src="man/figures/README-truncation-1.png" alt="" width="100%" />
 
-Note that, in the case of Domain, all occurrence observations have
-maximum similarity. A test dataset can be used instead:
+As shown above, truncation works well for most methods based on the
+proportion of known presences correctly classified. The exception is
+Domain, because it classifies similarity to any of the presences. Thus,
+every presence has a similarity value of 1, because it is equal at least
+to itself. It is not possible in this case to set a threshold that
+correctly classifies a given proportion of presences, because they will
+all always be correctly classified. A workaround is to define the
+threshold using test data, for example from a buffer around the presence
+points. This way we have a range of climatic similarity values in the
+spatial vicinity of the presences and we can choose a threshold:
 
 ``` r
 buf <- buffer(terra::vect(occs), 1000)
@@ -248,7 +256,7 @@ dm_pred_trunc_test <- predict(dm_fit_trunc_test, vars, type = "truncated")
 plot(dm_pred_trunc_test, main = "Domain truncated from test data")
 ```
 
-<img src="man/figures/README-trunc_test-1.png" alt="" width="100%" />
+<img src="man/figures/README-trunc_test-1.png" alt="" width="500px" style="display: block; margin: auto;" />
 
 ### Ensemble predictions
 
@@ -309,7 +317,7 @@ pROC::plot.roc(proc, print.auc = TRUE, auc.polygon = TRUE,
                max.auc.polygon = TRUE)
 ```
 
-<img src="man/figures/README-modev-1.png" alt="" width="100%" />
+<img src="man/figures/README-modev-1.png" alt="" width="700px" style="display: block; margin: auto;" />
 
 ``` r
 # we can also compute the partial ROC ratio under a maximum potential error:
@@ -320,5 +328,5 @@ procratio <- kuenm::kuenm_proc(occ.test = occs,
 
 procratio$pROC_summary
 #> Mean_AUC_ratio_at_5%            pval_pROC 
-#>             1.422413             0.000000
+#>             1.426779             0.000000
 ```
