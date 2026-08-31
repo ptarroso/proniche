@@ -14,6 +14,11 @@ from the presence sites, with no background or pseudo-absence data):
 - Kernel density estimate
 - Multivariate normal distribution
 
+## Reference
+
+Barbosa A.M. & Tarroso P. (2026) *proniche* – an R package for
+presence-only niche modelling in R. *Biodiversity Informatics*, in press
+
 ## User guide
 
 ### (Install and) load packages
@@ -82,10 +87,10 @@ vals <- terra::extract(vars, occs, ID = FALSE)
 
 # remove duplicates:
 nrow(vals)
-#> [1] 381
+#> [1] 383
 vals <- unique(vals)
 nrow(vals)
-#> [1] 79
+#> [1] 80
 
 head(vals)
 #>       bio_1    bio_6 bio_12 bio_14
@@ -93,8 +98,8 @@ head(vals)
 #> 3  16.73919 5.720833    570     14
 #> 7  17.62214 5.912360    268      1
 #> 12 17.96979 6.000000    210      1
-#> 17 17.76883 6.351948    294      1
-#> 19 17.30842 5.473000    300      2
+#> 16 16.66498 8.770213    495      1
+#> 19 17.76883 6.351948    294      1
 ```
 
 ### Plot frequency distributions
@@ -328,5 +333,5 @@ procratio <- kuenm::kuenm_proc(occ.test = occs,
 
 procratio$pROC_summary
 #> Mean_AUC_ratio_at_5%            pval_pROC 
-#>             1.426779             0.000000
+#>             1.418404             0.000000
 ```
